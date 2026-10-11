@@ -15,7 +15,8 @@ npm install
 npm run dev        # vite
 npm run build      # tsc --noEmit && vite build → dist/
 npm test           # vitest run
-node scripts/patch.ts <in.ffx> <out.ffx> --target <version>
+npm run check:task # tests + build + size/CSP checks (see CONSTRAINTS.md)
+node --experimental-strip-types scripts/patch.ts <in.ffx> <out.ffx> --target <version>
 ```
 
 Node LTS, npm. Dev deps only: typescript, vite, vitest.
@@ -23,10 +24,14 @@ Node LTS, npm. Dev deps only: typescript, vite, vitest.
 ## Structure
 
 ```
-index.html                 CSP: connect-src 'none'
+index.html                 page markup, links src/style.css
+vite.config.ts             injects CSP connect-src 'none' at build (dev would block live reload)
 src/main.ts, style.css     page wiring, imports converter
+src/ui/keyframe-grid.ts    hero animation
 src/converter/             pure byte logic, no DOM, runs in Node
 scripts/patch.ts           spike CLI, uses converter
+scripts/check-dist.ts      size budgets + CSP check on dist/
+reference/                 design reference the page must follow
 tests/fixtures/ffx/<ver>/  real samples, committed
 ```
 
