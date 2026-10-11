@@ -33,14 +33,14 @@ export function detect(bytes: Uint8Array): Result<{ version: string }> {
 }
 
 // Writes the target's `head` values into a copy. Any downgrade is allowed here; convert() limits it to tested pairs.
-export function patch(bytes: Uint8Array, target: string): Result<{ bytes: Uint8Array }> {
+export function patch(bytes: Uint8Array, target: string): Result<{ bytes: Uint8Array<ArrayBuffer> }> {
   const detected = detect(bytes);
   if (!detected.ok) return detected;
   if (!Object.hasOwn(VERSIONS, target)) return { ok: false, code: "unknown-target" };
   // Newer AE already opens older files, so upgrading has no use.
   if (Number(target) >= Number(detected.version)) return { ok: false, code: "not-downgrade" };
   const k = VERSIONS[target];
-  const out = bytes.slice();
+  const out = new Uint8Array(bytes); // fresh ArrayBuffer, so the result can go straight into a Blob
   const view = new DataView(out.buffer);
   view.setUint32(0x18, k.a, false);
   view.setUint32(0x1c, k.b, false);
@@ -70,7 +70,7 @@ function chunksFit(view: DataView, start: number, end: number): boolean {
 }
 
 // The page's entry point: only tested pairs, and no bytes unless the output passes the checks.
-export function convert(bytes: Uint8Array, target: string): Result<{ bytes: Uint8Array }> {
+export function convert(bytes: Uint8Array, target: string): Result<{ bytes: Uint8Array<ArrayBuffer> }> {
   const source = detect(bytes);
   if (!source.ok) return source;
   if (!SUPPORTED[source.version]?.includes(target)) return { ok: false, code: "unsupported-pair" };

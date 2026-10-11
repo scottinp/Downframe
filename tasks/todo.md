@@ -30,8 +30,8 @@
 - Files: `src/converter/*.ts`, `tests/converter.test.ts`
 
 ## 5. Page (S)
-- [ ] Drop or pick a file → show the detected version or the error → dropdown of supported targets → convert → download `<name>.ae<target>.ffx` with the experimental label
-- [ ] `index.html` CSP `connect-src 'none'`
+- [x] Drop or pick a file → show the detected version or the error → dropdown of supported targets → convert → download `<name>.ae<target>.ffx` with the experimental label
+- [x] `index.html` CSP `connect-src 'none'`
 - Verify: `npm run dev`, run the full flow by hand; DevTools Network shows no requests after load
 - Files: `index.html`, `src/main.ts`, `src/style.css`
 - Depends on: 4

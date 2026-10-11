@@ -1,11 +1,202 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Downframe</title>
-  </head>
-  <body>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downframe: open newer After Effects presets in older versions</title>
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <img src="/assets/logo.png" alt="" width="28" height="28">
+      downframe
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <a href="https://github.com/scottinp/Downframe">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <canvas class="keyframes" aria-hidden="true"></canvas>
+    <div class="wrap">
+
+      <div class="copy">
+        <span class="kicker">Downgrades After Effects files.</span>
+        <h1>Open it in your version.</h1>
+        <p class="promise">Drop in an After Effects preset (<span class="kw-ffx">.ffx</span>) saved in a newer version and get a copy that opens in an older one. It runs in your browser, so the file never leaves your computer.</p>
+        <div class="actions">
+          <a class="btn primary" href="#converter">Convert a preset</a>
+          <a class="btn" href="#how">How it works</a>
+        </div>
+      </div>
+
+      <div class="stage" id="converter">
+        <div class="panel" data-step="1">
+
+          <ol class="layer tabs" aria-label="Steps">
+            <li data-tab="1" aria-current="step"><span class="dot">1</span>Drop</li>
+            <li data-tab="2"><span class="dot">2</span>Pick a version</li>
+            <li data-tab="3"><span class="dot">3</span>Download</li>
+            <li class="tag">Experimental</li>
+          </ol>
+
+          <div class="layer body">
+
+            <!-- Step 1: drop -->
+            <div class="view v1">
+              <div class="dropzone" id="dropzone">
+                <svg aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6V26"/><path d="M12 18L20 26L28 18"/><path d="M7 33H33"/></svg>
+                <div class="dropzone-title">Drop a preset here</div>
+                <div class="dropzone-hint">One <span class="kw-ffx">.ffx</span> file at a time. It stays on your computer. We never receive or store it.</div>
+                <button class="btn light" type="button" id="choose">Choose a file</button>
+                <input type="file" id="file" accept=".ffx" hidden>
+              </div>
+              <p class="error" id="error1" role="alert"></p>
+            </div>
+
+            <!-- Step 2: pick a version -->
+            <div class="view v2">
+              <div class="file-row">
+                <span class="badge">FFX</span>
+                <span class="file-name" id="source-name"></span>
+                <span class="file-meta" id="source-meta"></span>
+              </div>
+              <div class="field">
+                <label class="field-label" for="target">Convert to</label>
+                <select id="target"></select>
+                <span class="field-hint">Only targets that have been tried for this source version are listed.</span>
+              </div>
+              <div class="warning">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L18 17H2Z"/><path d="M10 8V12"/><path d="M10 14.6V14.7"/></svg>
+                <span>Effects or properties that only exist in the newer version may be missing after conversion. Check the result before you rely on it.</span>
+              </div>
+              <p class="error" id="error2" role="alert"></p>
+              <div class="view-actions">
+                <button class="btn" type="button" data-restart>Back</button>
+                <button class="btn convert" type="button" id="convert">Convert</button>
+              </div>
+            </div>
+
+            <!-- Step 3: download -->
+            <div class="view v3">
+              <div class="done">
+                <svg aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="11"/><path d="M9 14.5L12.5 18L19 11"/></svg>
+                <div class="done-title">Converted</div>
+              </div>
+              <div class="file-row">
+                <span class="badge">FFX</span>
+                <span class="file-name" id="output-name"></span>
+                <span class="file-meta">Your original is unchanged</span>
+              </div>
+              <ul class="checks">
+                <li class="ok">File structure still reads correctly</li>
+                <li class="ok">Version stamp rewritten</li>
+                <li class="warn">Not checked: whether After Effects opens it. Test it in your version.</li>
+              </ul>
+              <div class="view-actions">
+                <button class="btn" type="button" data-restart>Convert another</button>
+                <button class="btn primary" type="button" id="download">Download</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="intro">
+    <div class="wrap">
+      <div class="facts">
+        <div><b>Files</b><span><span class="kw-ffx">.ffx</span> animation presets</span></div>
+        <div><b>Direction</b><span>Newer to older only</span></div>
+        <div><b>Privacy</b><span>Runs in your browser. Nothing is uploaded.</span></div>
+        <div><b>Cost</b><span>Free, no account</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="how">
+    <div class="wrap">
+      <span class="kicker">01 / How it works</span>
+      <h2>It changes the version stamp, not your animation.</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Rewrites the version</h3>
+          <p>Every preset records the After Effects version that saved it. Downframe finds that record and sets it to the version you picked.</p>
+        </div>
+        <div class="card">
+          <h3>Checks the file</h3>
+          <p>Before you download, it confirms the file still reads correctly and the version was actually changed. If not, you get an explanation and no file.</p>
+        </div>
+        <div class="card">
+          <h3>Does not translate</h3>
+          <p>Anything the older version does not understand is left as it is. The preset may open with properties missing, which is why every conversion is marked experimental.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="faq">
+    <div class="wrap">
+      <span class="kicker">02 / FAQ</span>
+      <h2>Questions</h2>
+      <div class="faq">
+        <details open>
+          <summary>Is my file uploaded anywhere?</summary>
+          <p>No. The file is read and converted on this page, inside your browser. It is never sent to a server.</p>
+        </details>
+        <details>
+          <summary>My converted preset will not open. Why?</summary>
+          <p>It probably uses something the older version does not have. Changing the version stamp cannot add a missing effect or property.</p>
+        </details>
+        <details>
+          <summary>Does it work with <span class="kw-aep">.aep</span> project files?</summary>
+          <p>Not yet. Presets only for now.</p>
+        </details>
+        <details>
+          <summary>Can it convert older presets to a newer version?</summary>
+          <p>You do not need a tool for that. After Effects already opens presets from older versions.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="contact">
+    <div class="wrap">
+      <span class="kicker">03 / Contact</span>
+      <h2>Found a preset that breaks?</h2>
+      <p class="lead">Tell me which version saved it and which one you converted to. That is how the supported list grows.</p>
+      <div class="actions">
+        <a class="btn light" href="mailto:scottinpham@gmail.com">Email scottinpham@gmail.com</a>
+        <a class="btn" href="https://github.com/scottinp/Downframe/issues">Open an issue</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>Downframe by scottinp</div>
+    <div>Not affiliated with Adobe. After Effects is a trademark of Adobe Inc.</div>
+  </div>
+</footer>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
 </html>
