@@ -117,6 +117,8 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 }
 .promise { margin: 22px 0 0; max-width: 21em; }
 .hero .actions { margin-top: 26px; }
+/* Side by side, the converter is already in view; the jump link only helps once it stacks below. */
+@media (min-width: 761px) { .hero .actions .primary { display: none; } }
 .stat { margin: 28px 0 0; color: var(--text-2); }
 
 /* ---------- converter panel (3D) ---------- */
