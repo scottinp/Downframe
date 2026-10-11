@@ -13,8 +13,8 @@
 - Files: `src/converter/*.ts`, `tests/converter.test.ts`
 
 ## 3. Patch + spike CLI (S)
-- [ ] `patch()` rewrites the version on a copy of the input
-- [ ] `node scripts/patch.ts <in> <out> --target <ver>` writes the patched file
+- [x] `patch()` rewrites the version on a copy of the input
+- [x] `node scripts/patch.ts <in> <out> --target <ver>` writes the patched file
 - Verify: `npm test`: output re-detects as the target and differs from the input only at the version bytes
 - Files: `src/converter/*.ts`, `scripts/patch.ts`, `tests/converter.test.ts`
 - Depends on: 2

@@ -31,3 +31,17 @@ export function detect(bytes: Uint8Array): Result<{ version: string }> {
   });
   return version ? { ok: true, version } : { ok: false, code: "unknown-version" };
 }
+
+// Writes the target's `head` values into a copy. Any pair is allowed here; convert() limits it to tested pairs.
+export function patch(bytes: Uint8Array, target: string): Result<{ bytes: Uint8Array }> {
+  const detected = detect(bytes);
+  if (!detected.ok) return detected;
+  if (!Object.hasOwn(VERSIONS, target)) return { ok: false, code: "unknown-target" };
+  const k = VERSIONS[target];
+  const out = bytes.slice();
+  const view = new DataView(out.buffer);
+  view.setUint32(0x18, k.a, false);
+  view.setUint32(0x1c, k.b, false);
+  view.setUint16(0x20, k.c, false);
+  return { ok: true, bytes: out };
+}
