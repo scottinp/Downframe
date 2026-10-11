@@ -1,7 +1,7 @@
 # Tasks
 
 ## 1. Scaffold (XS)
-- [ ] `package.json` scripts from SPEC.md, `tsconfig.json` (strict, `allowImportingTsExtensions`, `noEmit`), dev deps typescript/vite/vitest
+- [x] `package.json` scripts from SPEC.md, `tsconfig.json` (strict, `allowImportingTsExtensions`, `noEmit`), dev deps typescript/vite/vitest
 - Verify: `npm test` and `npm run build` run without errors
 - Files: `package.json`, `tsconfig.json`, `index.html`
 
