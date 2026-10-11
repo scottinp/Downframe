@@ -8,6 +8,10 @@
   <em>Open newer After Effects presets (.ffx) in older versions. Runs in your browser; files never leave it.</em>
 </p>
 
+<p align="center"><a href="https://downframe.net">downframe.net</a></p>
+
+Not affiliated with or endorsed by Adobe. Adobe and After Effects are either registered trademarks or trademarks of Adobe in the United States and/or other countries.
+
 ## Develop
 
 ```

@@ -37,5 +37,5 @@
 - Depends on: 4
 
 ## 6. Deploy (XS)
-- [ ] Connect the repo to Vercel (asks you first)
+- [x] Connect the repo to Vercel; build command `npm run check:task` so failed checks block the deploy
 - Verify: the live URL runs the full flow
