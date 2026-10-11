@@ -6,9 +6,9 @@
 - Files: `package.json`, `tsconfig.json`, `index.html`
 
 ## 2. Detect version (S)
-- [ ] You add fixtures to `tests/fixtures/ffx/<ver>/`
-- [ ] Parse the chunk container, find where the version is stored, `detect()` returns it or `unknown-version`
-- [ ] Empty, non-RIFF, and truncated files return an error code
+- [x] You add fixtures to `tests/fixtures/ffx/<ver>/`
+- [x] Parse the chunk container, find where the version is stored, `detect()` returns it or `unknown-version`
+- [x] Empty, non-RIFF, and truncated files return an error code
 - Verify: `npm test`: every fixture detects as its folder's version
 - Files: `src/converter/*.ts`, `tests/converter.test.ts`
 
@@ -20,8 +20,8 @@
 - Depends on: 2
 
 ## Checkpoint: gate
-- [ ] Patch fixtures to each older installed version, open them in AE, log the results in `docs/COMPATIBILITY.md`
-- [ ] At least 3 pairs work → continue. Otherwise stop and revisit DESIGN.md.
+- [x] Patch fixtures to each older installed version, open them in AE, log the results in `docs/COMPATIBILITY.md`
+- [x] At least 3 pairs work → continue. Otherwise stop and revisit DESIGN.md.
 
 ## 4. convert() (S)
 - [ ] Supported-pairs list taken from COMPATIBILITY.md; unsupported pairs return `unsupported-pair`
