@@ -184,6 +184,8 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .dropzone-hint { color: var(--text-2); font-size: 15px; max-width: 26em; }
 .dropzone .btn { margin-top: 6px; }
 .dropzone.over { border-color: var(--blue); }
+/* While dragging, children ignore the pointer so crossing them doesn't fire dragleave on the zone (border flicker). */
+.dropzone.over * { pointer-events: none; }
 
 .error { margin: 0; color: var(--warn-text); font-size: 15px; }
 .error:empty { display: none; }
