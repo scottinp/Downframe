@@ -24,8 +24,8 @@
 - [x] At least 3 pairs work → continue. Otherwise stop and revisit DESIGN.md.
 
 ## 4. convert() (S)
-- [ ] Supported-pairs list taken from COMPATIBILITY.md; unsupported pairs return `unsupported-pair`
-- [ ] Post-patch checks from DESIGN.md (re-parses, chunk sizes, version rewritten); a failure returns an error and no bytes
+- [x] Supported-pairs list taken from COMPATIBILITY.md; unsupported pairs return `unsupported-pair`
+- [x] Post-patch checks from DESIGN.md (re-parses, chunk sizes, version rewritten); a failure returns an error and no bytes
 - Verify: `npm test` covers every supported pair and every error code
 - Files: `src/converter/*.ts`, `tests/converter.test.ts`
 
