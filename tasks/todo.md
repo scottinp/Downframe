@@ -39,3 +39,8 @@
 ## 6. Deploy (XS)
 - [x] Connect the repo to Vercel; build command `npm run check:task` so failed checks block the deploy
 - Verify: the live URL runs the full flow
+
+## Later (not planned yet)
+- [ ] Batch upload: several `.ffx` at once. Decide: one download per file, or a `.zip` (needs a dependency; ask).
+- [ ] "X files converted" counter: same-origin endpoint (CSP already `'self'`), or Vercel Analytics custom events (check plan).
+- [ ] `.aep` conversion: out of scope in DESIGN.md. Needs its own spike like `.ffx`: find the version bytes, patch, open in each AE.

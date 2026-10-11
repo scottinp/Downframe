@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" width="220" alt="Downframe logo">
+  <img src="public/logo.png" width="220" alt="Downframe logo">
 </p>
 
 <h1 align="center">Downframe</h1>
