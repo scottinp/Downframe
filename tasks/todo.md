@@ -31,7 +31,7 @@
 
 ## 5. Page (S)
 - [x] Drop or pick a file → show the detected version or the error → dropdown of supported targets → convert → download `<name>.ae<target>.ffx` with the experimental label
-- [x] CSP `connect-src 'none'` (injected at build by `vite.config.ts`)
+- [x] CSP `connect-src 'none'` (injected at build by `vite.config.ts`; later `'self'` for Vercel Analytics)
 - Verify: `npm run dev`, run the full flow by hand; DevTools Network shows no requests after load
 - Files: `index.html`, `src/main.ts`, `src/style.css`, `src/ui/keyframe-grid.ts`, `vite.config.ts`
 - Depends on: 4

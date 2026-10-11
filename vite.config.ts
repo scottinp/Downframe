@@ -7,7 +7,7 @@ export default defineConfig({
       name: "csp-no-connect",
       apply: "build",
       transformIndexHtml: () => [
-        { tag: "meta", attrs: { "http-equiv": "Content-Security-Policy", content: "connect-src 'none'" }, injectTo: "head-prepend" },
+        { tag: "meta", attrs: { "http-equiv": "Content-Security-Policy", content: "connect-src 'self'" }, injectTo: "head-prepend" },
       ],
     },
   ],

@@ -25,7 +25,7 @@ Node LTS, npm. Dev deps only: typescript, vite, vitest.
 
 ```
 index.html                 page markup, links src/style.css
-vite.config.ts             injects CSP connect-src 'none' at build (dev would block live reload)
+vite.config.ts             injects CSP connect-src 'self' at build (dev would block live reload)
 src/main.ts, style.css     page wiring, imports converter
 src/ui/keyframe-grid.ts    hero animation
 src/converter/             pure byte logic, no DOM, runs in Node

@@ -18,8 +18,8 @@ for (const k of Object.keys(BUDGET) as (keyof typeof BUDGET)[]) {
   console.log(`${k}: ${got[k]} / ${BUDGET[k]}`);
   if (got[k] > BUDGET[k]) fails.push(`${k} ${got[k]} > ${BUDGET[k]}`);
 }
-// The "bytes never leave the browser" promise rests on this meta tag.
-if (!/http-equiv="Content-Security-Policy" content="connect-src (&#39;|')none(&#39;|')"/.test(readFileSync("dist/index.html", "utf8"))) fails.push("CSP connect-src 'none' missing from dist/index.html");
+// The "bytes never leave the browser" promise rests on this meta tag: only our own origin (Vercel Analytics), no third parties.
+if (!/http-equiv="Content-Security-Policy" content="connect-src (&#39;|')self(&#39;|')"/.test(readFileSync("dist/index.html", "utf8"))) fails.push("CSP connect-src 'self' missing from dist/index.html");
 
 if (fails.length) {
   console.error("FAIL\n" + fails.join("\n"));

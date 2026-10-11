@@ -15,7 +15,7 @@ Failing checks block handing work back. Never weaken a rule to make a change pas
 | JS gzip | ≤ 3000 B | 2888 | Today's value plus noise room; page is a small single tool. |
 | CSS gzip | ≤ 2500 B | 2378 | Same. |
 | dist total raw | ≤ 66000 B | 64595 | Catches a large new image or font. |
-| Built `index.html` has CSP `connect-src 'none'` | present | present | Guarantees file bytes can't be sent anywhere. |
+| Built `index.html` has CSP exactly `connect-src 'self'` | present | present | File bytes can't reach any third party. Was `'none'`; loosened to `'self'` on 2026-10-11 (user OK) so Vercel Analytics can post to its same-origin `/_vercel/insights` endpoint. |
 
 Size and CSP: `scripts/check-dist.ts` (budgets live there; keep both in sync).
 
