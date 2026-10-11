@@ -1,0 +1,28 @@
+// Checks dist/ against CONSTRAINTS.md. Run after `npm run build`.
+import { readdirSync, readFileSync } from "node:fs";
+import { gzipSync } from "node:zlib";
+
+// Keep in sync with CONSTRAINTS.md.
+const BUDGET = { jsGzip: 3000, cssGzip: 2500, totalRaw: 66000 };
+
+const files = readdirSync("dist/assets").map((n) => "dist/assets/" + n).concat("dist/index.html");
+const gz = (ext: string) => files.filter((f) => f.endsWith(ext)).reduce((s, f) => s + gzipSync(readFileSync(f)).length, 0);
+const got = {
+  jsGzip: gz(".js"),
+  cssGzip: gz(".css"),
+  totalRaw: files.reduce((s, f) => s + readFileSync(f).length, 0),
+};
+
+const fails: string[] = [];
+for (const k of Object.keys(BUDGET) as (keyof typeof BUDGET)[]) {
+  console.log(`${k}: ${got[k]} / ${BUDGET[k]}`);
+  if (got[k] > BUDGET[k]) fails.push(`${k} ${got[k]} > ${BUDGET[k]}`);
+}
+// The "bytes never leave the browser" promise rests on this meta tag.
+if (!/http-equiv="Content-Security-Policy" content="connect-src (&#39;|')none(&#39;|')"/.test(readFileSync("dist/index.html", "utf8"))) fails.push("CSP connect-src 'none' missing from dist/index.html");
+
+if (fails.length) {
+  console.error("FAIL\n" + fails.join("\n"));
+  process.exit(1);
+}
+console.log("ok");

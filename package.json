@@ -6,7 +6,10 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:fast": "tsc --noEmit",
+    "check:task": "npm test && npm run build && node --experimental-strip-types scripts/check-dist.ts",
+    "check:full": "npm run check:task && npm audit"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
