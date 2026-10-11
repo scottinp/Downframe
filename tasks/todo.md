@@ -1,0 +1,41 @@
+# Tasks
+
+## 1. Scaffold (XS)
+- [ ] `package.json` scripts from SPEC.md, `tsconfig.json` (strict, `allowImportingTsExtensions`, `noEmit`), dev deps typescript/vite/vitest
+- Verify: `npm test` and `npm run build` run without errors
+- Files: `package.json`, `tsconfig.json`, `index.html`
+
+## 2. Detect version (S)
+- [ ] You add fixtures to `tests/fixtures/ffx/<ver>/`
+- [ ] Parse the chunk container, find where the version is stored, `detect()` returns it or `unknown-version`
+- [ ] Empty, non-RIFF, and truncated files return an error code
+- Verify: `npm test`: every fixture detects as its folder's version
+- Files: `src/converter/*.ts`, `tests/converter.test.ts`
+
+## 3. Patch + spike CLI (S)
+- [ ] `patch()` rewrites the version on a copy of the input
+- [ ] `node scripts/patch.ts <in> <out> --target <ver>` writes the patched file
+- Verify: `npm test`: output re-detects as the target and differs from the input only at the version bytes
+- Files: `src/converter/*.ts`, `scripts/patch.ts`, `tests/converter.test.ts`
+- Depends on: 2
+
+## Checkpoint: gate
+- [ ] Patch fixtures to each older installed version, open them in AE, log the results in `docs/COMPATIBILITY.md`
+- [ ] At least 3 pairs work → continue. Otherwise stop and revisit DESIGN.md.
+
+## 4. convert() (S)
+- [ ] Supported-pairs list taken from COMPATIBILITY.md; unsupported pairs return `unsupported-pair`
+- [ ] Post-patch checks from DESIGN.md (re-parses, chunk sizes, version rewritten); a failure returns an error and no bytes
+- Verify: `npm test` covers every supported pair and every error code
+- Files: `src/converter/*.ts`, `tests/converter.test.ts`
+
+## 5. Page (S)
+- [ ] Drop or pick a file → show the detected version or the error → dropdown of supported targets → convert → download `<name>.ae<target>.ffx` with the experimental label
+- [ ] `index.html` CSP `connect-src 'none'`
+- Verify: `npm run dev`, run the full flow by hand; DevTools Network shows no requests after load
+- Files: `index.html`, `src/main.ts`, `src/style.css`
+- Depends on: 4
+
+## 6. Deploy (XS)
+- [ ] Connect the repo to Vercel (asks you first)
+- Verify: the live URL runs the full flow
