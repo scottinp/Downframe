@@ -33,7 +33,7 @@ Downframe patches the version identifiers inside the file: parse it, find where 
 
 Patching doesn't remove or translate data the older version doesn't understand. A patched file might not open, or might open with properties missing.
 
-Before download, Downframe checks that the file still parses, chunk sizes are consistent, and the version identifier was actually rewritten. That doesn't prove After Effects will open it, so every conversion is labeled experimental.
+Before download, Downframe checks that the file still parses, chunk sizes are consistent, and the version identifier was actually rewritten. That doesn't prove After Effects will open it, so every download comes with a warning to test it in the target version.
 
 ## Supported versions
 
@@ -65,7 +65,7 @@ Planned stack: static site, client-side TypeScript, no backend.
 
 ## Risks
 
-The main one is a file that opens but is subtly wrong, which is why conversions are labeled experimental. Patching might also only work for a few version pairs, which the first build step is meant to find out early. New After Effects releases could break detection, so unknown versions are treated as unsupported.
+The main one is a file that opens but is subtly wrong, which is why every download warns the user to test it. Patching might also only work for a few version pairs, which the first build step is meant to find out early. New After Effects releases could break detection, so unknown versions are treated as unsupported.
 
 ## Legal
 

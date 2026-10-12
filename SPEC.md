@@ -49,7 +49,7 @@ tests/fixtures/ffx/<ver>/  real samples, committed
 
 ## Boundaries
 
-- **Always:** keep `npm test` green before committing; label output experimental.
+- **Always:** keep `npm test` green before committing; warn that output must be tested in the target AE.
 - **Ask first:** new dependencies; adding a supported pair (only after a manual AE test).
 - **Never:** send file bytes over the network; copy code from closed converters; skip failing tests.
 

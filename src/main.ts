@@ -2,7 +2,7 @@ import { convert, detect, SUPPORTED } from "./converter/index.ts";
 import "./ui/keyframe-grid.ts";
 
 const MAX_BYTES = 50 * 1024 * 1024; // presets are a few KB; refuse before reading a huge file into memory
-const YEARS: Record<string, string> = { "17": "2020", "18": "2021", "25": "2025", "26": "2026" };
+const YEARS: Record<string, string> = { "17": "2020", "18": "2021", "22": "2022", "23": "2023", "24": "2024", "25": "2025", "26": "2026" };
 const label = (v: string) => `After Effects ${YEARS[v] ?? v} (${v}.x)`;
 
 const ERRORS: Record<string, string> = {

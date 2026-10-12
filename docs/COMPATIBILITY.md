@@ -7,6 +7,18 @@ Manual tests: a patched `.ffx` applied in the target After Effects version. Only
 | 26 → 25 | repetile | works | Unpatched file rejected ("created with a newer version", 26 :: 280). Patched `head` bytes 0x1b, 0x1f to 25's values: applies. | 2026-10-10 |
 | 26 → 18 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 18's values: applies. | 2026-10-11 |
 | 25 → 18 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 18's values: applies. | 2026-10-11 |
+| 26 → 24 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 24's values: applies. | 2026-10-11 |
+| 25 → 24 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 24's values: applies. | 2026-10-11 |
+| 24 → 18 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 18's values: applies. | 2026-10-11 |
+| 26 → 23 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 23's values: applies. | 2026-10-11 |
+| 25 → 23 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 23's values: applies. | 2026-10-11 |
+| 24 → 23 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 23's values: applies. | 2026-10-11 |
+| 23 → 18 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 18's values: applies. | 2026-10-11 |
+| 26 → 22 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 22's values: applies. | 2026-10-12 |
+| 25 → 22 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 22's values: applies. | 2026-10-12 |
+| 24 → 22 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 22's values: applies. | 2026-10-12 |
+| 23 → 22 | repetile | works | Unpatched file rejected. Patched `head` bytes 0x1b, 0x1f to 22's values: applies. | 2026-10-12 |
+| 22 → 18 | repetile | works | Unpatched file rejected. Patched `head` byte 0x1f to 18's value (0x1b is 0x5d in both): applies. | 2026-10-12 |
 
 ## Format notes
 
@@ -16,6 +28,9 @@ Manual tests: a patched `.ffx` applied in the target After Effects version. Only
 |---|---|---|---|---|
 | 17 | 3 | 0x5d | 0x14 | 0x017f |
 | 18 | 3 | 0x5d | 0x19 | 0x0100 |
+| 22 | 3 | 0x5d | 0x2b | 0x0100 |
+| 23 | 3 | 0x5e | 0x03 | 0x0100 |
+| 24 | 3 | 0x5f | 0x01 | 0x0100 |
 | 25 | 3 | 0x60 | 0x09 | 0x0100 |
 | 26 | 3 | 0x61 | 0x02 | 0x0100 |
 

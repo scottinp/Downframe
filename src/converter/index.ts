@@ -5,6 +5,9 @@ export type Result<T> = ({ ok: true } & T) | { ok: false; code: string };
 export const VERSIONS: Record<string, { a: number; b: number; c: number }> = {
   "17": { a: 0x5d, b: 0x14, c: 0x017f },
   "18": { a: 0x5d, b: 0x19, c: 0x0100 },
+  "22": { a: 0x5d, b: 0x2b, c: 0x0100 },
+  "23": { a: 0x5e, b: 0x03, c: 0x0100 },
+  "24": { a: 0x5f, b: 0x01, c: 0x0100 },
   "25": { a: 0x60, b: 0x09, c: 0x0100 },
   "26": { a: 0x61, b: 0x02, c: 0x0100 },
 };
@@ -50,8 +53,11 @@ export function patch(bytes: Uint8Array, target: string): Result<{ bytes: Uint8A
 
 // Pairs that opened in the target AE version, from the `works` rows in docs/COMPATIBILITY.md.
 export const SUPPORTED: Record<string, string[]> = {
-  "26": ["25", "18"],
-  "25": ["18"],
+  "26": ["25", "24", "23", "22", "18"],
+  "25": ["24", "23", "22", "18"],
+  "24": ["23", "22", "18"],
+  "23": ["22", "18"],
+  "22": ["18"],
 };
 
 // True if the chunks from `start` to `end` fill it exactly, LIST contents included. Chunks are padded to even sizes.

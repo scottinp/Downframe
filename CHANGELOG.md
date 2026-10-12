@@ -2,6 +2,10 @@
 
 What changed for people using [downframe.net](https://downframe.net). Newest first.
 
+## 1.1.0, 2026-10-12
+
+- Added: After Effects 2024, 2023 and 2022. Convert any newer preset down to any of them, and all three down to 2021.
+
 ## 1.0.0, 2026-10-11
 
 First release.
