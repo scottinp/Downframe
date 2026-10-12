@@ -41,7 +41,7 @@
 - Verify: the live URL runs the full flow
 
 ## Later (not planned yet)
-- [ ] Batch upload: several `.ffx` at once. Decide: one download per file, or a `.zip` (needs a dependency; ask).
+- [ ] Batch upload: several `.ffx` at once. Decide: one download per file, or a `.zip` (needs a dependency; ask). Idea: show the files as an AE-timeline-style layer list (row number, color label, name, per-row status). Draw our own icons; don't copy Adobe's.
 - [ ] "X files converted" counter: same-origin endpoint (CSP already `'self'`), or Vercel Analytics custom events (check plan).
 - [ ] More blue on the page: pick from headline accent word, blue section kickers, step numbers, link hovers, tinted keyframes (blue on `--bg` ≈ 4.3:1, so large/bold text only). Avoid an AE-purple theme (Adobe trade dress). Update reference/README.md color rules to match.
 - [ ] Rename the "Experimental" panel label. DESIGN.md requires output be labeled experimental, so the new wording must still say AE may not open it.
