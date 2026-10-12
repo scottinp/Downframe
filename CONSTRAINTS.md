@@ -12,8 +12,8 @@ Failing checks block handing work back. Never weaken a rule to make a change pas
 ## Enforced (`npm run check:task`, ~5 s, budget 30 s)
 | Rule | Limit | Today (2026-10-11) | Why |
 |---|---|---|---|
-| JS gzip | ≤ 3000 B | 2888 | Today's value plus noise room; page is a small single tool. |
-| CSS gzip | ≤ 2500 B | 2378 | Same. |
+| JS gzip | ≤ 5000 B | 2888 | Started at 3000 (2026-10-11). Raised to 4000 on 2026-10-12 (user OK) for batch upload + zip writer, then to 5000 the same day (user OK) for adding files to a batch, with room for one more small feature. |
+| CSS gzip | ≤ 3000 B | 2378 | Started at 2500. Raised to 3000 on 2026-10-12 (user OK), same reason. |
 | dist total raw | ≤ 66000 B | 64595 | Catches a large new image or font. |
 | Built `index.html` has CSP exactly `connect-src 'self'` | present | present | File bytes can't reach any third party. Was `'none'`; loosened to `'self'` on 2026-10-11 (user OK) so Vercel Analytics can post to its same-origin `/_vercel/insights` endpoint. |
 

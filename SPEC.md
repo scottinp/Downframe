@@ -28,6 +28,7 @@ index.html                 page markup, links src/style.css
 vite.config.ts             injects CSP connect-src 'self' at build (dev would block live reload)
 src/main.ts, style.css     page wiring, imports converter
 src/ui/keyframe-grid.ts    hero animation
+src/zip.ts                 minimal stored .zip writer for batch download
 src/converter/             pure byte logic, no DOM, runs in Node
 scripts/patch.ts           spike CLI, uses converter
 scripts/check-dist.ts      size budgets + CSP check on dist/

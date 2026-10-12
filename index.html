@@ -68,25 +68,24 @@
             <div class="view v1">
               <div class="dropzone" id="dropzone">
                 <svg aria-hidden="true" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6V26"/><path d="M12 18L20 26L28 18"/><path d="M7 33H33"/></svg>
-                <div class="dropzone-title">Drop a preset here</div>
-                <div class="dropzone-hint">One <span class="kw-ffx">.ffx</span> file at a time. It stays on your computer. We never receive or store it.</div>
-                <button class="btn light" type="button" id="choose">Choose a file</button>
-                <input type="file" id="file" accept=".ffx" hidden>
+                <div class="dropzone-title">Drop presets here</div>
+                <div class="dropzone-hint">One <span class="kw-ffx">.ffx</span> file or a whole pack. It stays on your computer. We never receive or store it.</div>
+                <button class="btn light" type="button" id="choose">Choose files</button>
+                <input type="file" id="file" accept=".ffx" multiple hidden>
               </div>
               <p class="error" id="error1" role="alert"></p>
             </div>
 
             <!-- Step 2: pick a version -->
             <div class="view v2">
-              <div class="file-row">
-                <span class="badge">FFX</span>
-                <span class="file-name" id="source-name"></span>
-                <span class="file-meta" id="source-meta"></span>
+              <div class="files">
+                <ol class="layers" id="layers2" aria-label="Files"></ol>
+                <button class="btn add" type="button" id="add">+ Add files</button>
               </div>
               <div class="field">
                 <label class="field-label" for="target">Convert to</label>
                 <select id="target"></select>
-                <span class="field-hint">Only targets that have been tried for this source version are listed.</span>
+                <span class="field-hint">Only tested conversions are listed. Presets already this version or older are included as they are.</span>
               </div>
               <div class="warning">
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L18 17H2Z"/><path d="M10 8V12"/><path d="M10 14.6V14.7"/></svg>
@@ -94,7 +93,7 @@
               </div>
               <p class="error" id="error2" role="alert"></p>
               <div class="view-actions">
-                <button class="btn" type="button" data-restart>Back</button>
+                <button class="btn" type="button" data-restart>Start over</button>
                 <button class="btn convert" type="button" id="convert">Convert</button>
               </div>
             </div>
@@ -105,17 +104,15 @@
                 <svg aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="11"/><path d="M9 14.5L12.5 18L19 11"/></svg>
                 <div class="done-title">Converted</div>
               </div>
-              <div class="file-row">
-                <span class="badge">FFX</span>
-                <span class="file-name" id="output-name"></span>
-                <span class="file-meta">Your original is unchanged</span>
-              </div>
+              <ol class="layers" id="layers3" aria-label="Results"></ol>
               <ul class="checks">
+                <li class="ok">Your originals are unchanged</li>
                 <li class="ok">File structure still reads correctly</li>
                 <li class="ok">Version stamp rewritten</li>
                 <li class="warn">Not checked: whether After Effects opens it. Test it in your version.</li>
               </ul>
               <div class="view-actions">
+                <button class="btn" type="button" id="back">Back</button>
                 <button class="btn" type="button" data-restart>Convert another</button>
                 <button class="btn primary" type="button" id="download">Download</button>
               </div>

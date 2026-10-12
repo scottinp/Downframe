@@ -41,7 +41,7 @@
 - Verify: the live URL runs the full flow
 
 ## Later (not planned yet)
-- [ ] Batch upload: several `.ffx` at once. Decide: one download per file, or a `.zip` (needs a dependency; ask). Idea: show the files as an AE-timeline-style layer list (row number, color label, name, per-row status). Draw our own icons; don't copy Adobe's.
+- [x] Batch upload: same flow as one file; AE-timeline-style layer list; one `.zip` via own writer (src/zip.ts, no dependency); presets already at/below the target go in unchanged.
 - [ ] "X files converted" counter: same-origin endpoint (CSP already `'self'`), or Vercel Analytics custom events (check plan).
 - [ ] More blue on the page: pick from headline accent word, blue section kickers, step numbers, link hovers, tinted keyframes (blue on `--bg` ≈ 4.3:1, so large/bold text only). Avoid an AE-purple theme (Adobe trade dress). Update reference/README.md color rules to match.
 - [x] Rename the "Experimental" panel label: now shows the app version (`v1.1.0`). The step-3 "Not checked… Test it in your version" line carries the warning.

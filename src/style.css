@@ -51,7 +51,7 @@ h3 { font-size: 18px; margin-bottom: 8px; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
 /* small uppercase mono text: nav, buttons, labels, footer */
-.kicker, nav, .btn, .tag, .stat, .facts b, .field-label, .badge, footer {
+.kicker, nav, .btn, .tag, .facts b, .field-label, footer {
   font-family: var(--mono);
   font-size: 12.5px;
   letter-spacing: 0.08em;
@@ -119,7 +119,6 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .hero .actions { margin-top: 26px; }
 /* Side by side, the converter is already in view; the jump link only helps once it stacks below. */
 @media (min-width: 761px) { .hero .actions .primary { display: none; } }
-.stat { margin: 28px 0 0; color: var(--text-2); }
 
 /* ---------- converter panel (3D) ---------- */
 
@@ -185,19 +184,26 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .dropzone-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
 .dropzone-hint { color: var(--text-2); font-size: 15px; max-width: 26em; }
 .dropzone .btn { margin-top: 6px; }
-.dropzone.over { border-color: var(--blue); }
-/* While dragging, children ignore the pointer so crossing them doesn't fire dragleave on the zone (border flicker). */
-.dropzone.over * { pointer-events: none; }
+.over .dropzone, .over .layers { border-color: var(--blue); }
 
 .error { margin: 0; color: var(--warn-text); font-size: 15px; }
 .error:empty { display: none; }
 
-/* steps 2 and 3 */
-.file-row {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
-  padding: 14px 16px; background: var(--raised); border: 1px solid var(--line); border-radius: 8px;
+/* steps 2 and 3: files as an AE-timeline-style layer list (scrolls itself; never overflow on .panel) */
+.layers {
+  margin: 0; padding: 0; list-style: none; max-height: 232px; overflow-y: auto;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--raised);
 }
-.badge { padding: 3px 8px; border-radius: 4px; background: var(--inset); border: 1px solid var(--line); font-size: 11px; color: var(--blue); }
+.layers li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 10px 14px; border-top: 1px solid var(--line); }
+.layers li:first-child { border-top: 0; }
+.layers .num { min-width: 2ch; text-align: right; font-family: var(--mono); font-size: 12.5px; color: var(--text-2); }
+.layers .swatch { flex: none; width: 12px; height: 12px; border-radius: 3px; background: var(--blue); }
+.layers .bad .swatch { background: var(--warn-text); }
+.layers .bad .file-meta { color: var(--warn-text); }
+.files { display: flex; flex-direction: column; gap: 8px; }
+.btn.add { align-self: flex-start; min-height: 38px; padding: 0 14px; }
+.remove { width: 28px; height: 28px; padding: 0; border: 0; background: none; color: var(--text-2); font-size: 18px; cursor: pointer; }
+.remove:hover { color: var(--text); }
 .file-name { font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
 .file-meta { margin-left: auto; color: var(--text-2); font-size: 14px; }
 
