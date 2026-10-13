@@ -31,6 +31,18 @@ const error2 = $("error2");
 type Item = { name: string; bytes?: Uint8Array; version?: string; code?: string };
 type Row = { name: string; meta: string; bad?: boolean };
 
+// Shared "files converted" total (api/count.ts). Stays hidden when the API is missing (vite dev) or down.
+const counter = $("converted");
+const count = (init?: RequestInit) => fetch("/api/count", init)
+  .then((r) => (r.ok ? r.json() : null))
+  .then((d) => {
+    if (typeof d?.total !== "number" || d.total < 1) return;
+    counter.textContent = d.total.toLocaleString("en-US");
+    counter.parentElement!.parentElement!.hidden = false;
+  })
+  .catch(() => {});
+count();
+
 let items: Item[] = [];
 let outputs: { name: string; bytes: Uint8Array<ArrayBuffer> }[] = [];
 
@@ -168,6 +180,7 @@ $("convert").addEventListener("click", () => {
 function convertAll() {
   const to = target.value;
   outputs = [];
+  let converted = 0;
   const rows = items.map((it): Row => {
     if (!it.version) return { name: it.name, meta: message(it.code!), bad: true };
     // Already opens in the target: include the original, so the download has every preset that was dropped.
@@ -179,8 +192,11 @@ function convertAll() {
     if (!result.ok) return { name: it.name, meta: ERRORS[result.code] ?? `Conversion failed (${result.code}).`, bad: true };
     const name = `${it.name.replace(/\.ffx$/i, "")}.ae${to}.ffx`;
     outputs.push({ name, bytes: result.bytes });
+    converted++;
     return { name, meta: "Converted" };
   });
+  // Only the number is sent. The API caps one report at 100 (MAX_ADD).
+  if (converted) count({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ n: Math.min(converted, 100) }) });
   if (outputs.length === 0) {
     error2.textContent = items.length === 1 ? rows[0].meta : "None of these files could be converted. Your originals are unchanged.";
     return;
