@@ -18,6 +18,7 @@ const ERRORS: Record<string, string> = {
   "too-large": "That file is too large to be a preset.",
   "read-failed": "Could not read that file. Try choosing it again.",
 };
+const KEPT_UNKNOWN = "Unknown version, kept as is";
 const message = (code: string) => ERRORS[code] ?? `Could not read that file (${code}).`;
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -28,6 +29,7 @@ const error1 = $("error1");
 const error2 = $("error2");
 
 // A dropped file: readable presets have bytes + version, the rest keep the error code to show in their row.
+// A preset of an unknown version also keeps its bytes, so it can be passed through unchanged.
 type Item = { name: string; bytes?: Uint8Array; version?: string; code?: string };
 type Row = { name: string; meta: string; bad?: boolean };
 
@@ -104,7 +106,8 @@ async function read(file: File): Promise<Item> {
     return { name: file.name, code: "read-failed" };
   }
   const detected = detect(bytes);
-  return detected.ok ? { name: file.name, bytes, version: detected.version } : { name: file.name, code: detected.code };
+  if (detected.ok) return { name: file.name, bytes, version: detected.version };
+  return detected.code === "unknown-version" ? { name: file.name, bytes, code: detected.code } : { name: file.name, code: detected.code };
 }
 
 // On step 2, new files join the batch; otherwise they start a new one.
@@ -127,19 +130,21 @@ async function load(files: File[]) {
 function setItems(loaded: Item[]): boolean {
   const readable = loaded.filter((it) => it.version);
   if (readable.length === 0) {
-    error1.textContent = loaded.length === 1 ? message(loaded[0].code!) : "None of these files are presets Downframe can read.";
+    error1.textContent = loaded.length === 1 ? message(loaded[0].code!)
+      : loaded.some((it) => it.bytes) ? "Downframe does not recognise the version of any of these presets."
+      : "None of these files are presets Downframe can read.";
     return false;
   }
   const targets = [...new Set(readable.flatMap((it) => SUPPORTED[it.version!] ?? []))].sort((a, b) => Number(b) - Number(a));
   if (targets.length === 0) {
     error1.textContent = readable.length === 1
-      ? `This preset is from ${label(readable[0].version!)}. No older version has been tested for it yet.`
-      : "No older version has been tested for these presets yet.";
+      ? `${label(readable[0].version!)} has no supported older version, so there is nothing to convert.`
+      : "None of these presets have a supported older version, so there is nothing to convert.";
     return false;
   }
   items = loaded;
-  renderRows($("layers2"), items.map((it) => it.version
-    ? { name: it.name, meta: `Saved in ${label(it.version)}` }
+  renderRows($("layers2"), items.map((it) => it.version ? { name: it.name, meta: `Saved in ${label(it.version)}` }
+    : it.bytes ? { name: it.name, meta: KEPT_UNKNOWN }
     : { name: it.name, meta: message(it.code!), bad: true }), remove);
   const picked = target.value;
   target.replaceChildren(...targets.map((v) => new Option(label(v), v)));
@@ -196,14 +201,18 @@ function convertAll() {
   const to = target.value;
   outputs = [];
   let converted = 0;
+  // Presets that can't be converted still go in the download unchanged, so a whole folder can be dropped as is.
+  const keep = (it: Item, meta: string): Row => {
+    outputs.push({ name: it.name, bytes: new Uint8Array(it.bytes!) });
+    return { name: it.name, meta };
+  };
   const rows = items.map((it): Row => {
-    if (!it.version) return { name: it.name, meta: message(it.code!), bad: true };
+    if (!it.bytes) return { name: it.name, meta: message(it.code!), bad: true };
+    if (!it.version) return keep(it, KEPT_UNKNOWN);
     // Already opens in the target: include the original, so the download has every preset that was dropped.
-    if (Number(it.version) <= Number(to)) {
-      outputs.push({ name: it.name, bytes: new Uint8Array(it.bytes!) });
-      return { name: it.name, meta: `Already opens in ${year(to)}, included as is` };
-    }
-    const result = convert(it.bytes!, to);
+    if (Number(it.version) <= Number(to)) return keep(it, `Already opens in ${year(to)}, included as is`);
+    const result = convert(it.bytes, to);
+    if (!result.ok && result.code === "unsupported-pair") return keep(it, `No tested conversion to ${year(to)}, kept as is`);
     if (!result.ok) return { name: it.name, meta: ERRORS[result.code] ?? `Conversion failed (${result.code}).`, bad: true };
     const name = `${it.name.replace(/\.ffx$/i, "")}.ae${to}.ffx`;
     outputs.push({ name, bytes: result.bytes });
