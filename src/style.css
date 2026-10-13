@@ -31,6 +31,8 @@
 
 * { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -91,7 +93,9 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .btn:hover { border-color: var(--text-2); color: var(--text); }
 .btn.primary { background: var(--blue); border-color: var(--blue); color: var(--ink); font-weight: 500; }
 .btn.primary:hover { background: var(--blue-deep); border-color: var(--blue-deep); color: var(--ink); }
-.btn.convert { background: var(--purple); border-color: var(--purple); color: var(--ink); font-weight: 500; }
+.btn.convert { position: relative; background: var(--purple); border-color: var(--purple); color: var(--ink); font-weight: 500; }
+.btn.convert.busy::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 6px; height: 3px; border-radius: 2px; background: var(--ink); transform-origin: left; animation: fill 0.7s ease-out both; }
+@keyframes fill { from { transform: scaleX(0); } }
 .btn.light { background: var(--text); border-color: var(--text); color: var(--ink); font-weight: 500; }
 .btn.light:hover { color: var(--ink); }
 
@@ -115,6 +119,7 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
   font-weight: 800; line-height: 0.95; letter-spacing: -0.035em;
   max-width: 6.5em;
 }
+.hero h1 .accent { color: var(--blue); }   /* blue on --bg is 4.3:1: large/bold text only */
 .promise { margin: 22px 0 0; max-width: 21em; }
 .hero .actions { margin-top: 26px; }
 /* Side by side, the converter is already in view; the jump link only helps once it stacks below. */
@@ -271,5 +276,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .panel { animation: none; }
+  .panel, .btn.convert.busy::after { animation: none; }
+  html { scroll-behavior: auto; }
 }

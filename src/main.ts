@@ -139,7 +139,8 @@ fileInput.addEventListener("change", () => {
 // Stop a file dropped next to the zone from replacing the page. Steps 1 and 2 take drops anywhere on the panel.
 for (const type of ["dragover", "drop"]) window.addEventListener(type, (e) => e.preventDefault());
 // Moving over a child fires dragleave on the one before it, so count enters/leaves and clear only when back to zero.
-const accepts = () => panel.dataset.step !== "3";
+const view2 = panel.querySelector<HTMLElement>(".v2")!;
+const accepts = () => panel.dataset.step !== "3" && !view2.inert;
 let depth = 0;
 panel.addEventListener("dragenter", () => { depth++; if (accepts()) panel.classList.add("over"); });
 panel.addEventListener("dragleave", () => { if (--depth <= 0) { depth = 0; panel.classList.remove("over"); } });
@@ -149,7 +150,22 @@ panel.addEventListener("drop", (e) => {
   if (accepts()) load(Array.from(e.dataTransfer?.files ?? []));
 });
 
+// Converting takes milliseconds, so a short bar shows something happened. Step 2 is inert meanwhile so the batch can't change.
 $("convert").addEventListener("click", () => {
+  const button = $("convert");
+  button.classList.add("busy");
+  button.textContent = "Converting…";
+  view2.inert = true;
+  setTimeout(() => {
+    button.classList.remove("busy");
+    button.textContent = "Convert";
+    view2.inert = false;
+    button.focus();
+    convertAll();
+  }, 700);
+});
+
+function convertAll() {
   const to = target.value;
   outputs = [];
   const rows = items.map((it): Row => {
@@ -172,7 +188,7 @@ $("convert").addEventListener("click", () => {
   renderRows($("layers3"), rows);
   $("download").textContent = outputs.length > 1 ? `Download all (${outputs.length})` : "Download";
   show(3, $("download"));
-});
+}
 
 $("download").addEventListener("click", () => {
   if (outputs.length === 0) return;

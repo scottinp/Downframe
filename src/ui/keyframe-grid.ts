@@ -16,10 +16,11 @@ const clamp = (v: number) => Math.min(1, Math.max(0, v));
 const canvas = document.querySelector<HTMLCanvasElement>("canvas.keyframes");
 const ctx = canvas?.getContext("2d");
 
-// Rounded diamond: left half white, right half white at half opacity. Per-cell opacity comes from globalAlpha.
+// Rounded diamond: left half --blue, right half --blue at half opacity. Per-cell opacity comes from globalAlpha.
 const sprite = document.createElement("canvas");
 sprite.width = sprite.height = SPRITE;
 const sctx = sprite.getContext("2d");
+const blue = getComputedStyle(document.documentElement).getPropertyValue("--blue").trim() || "#3899FF";
 if (sctx) {
   const c = SPRITE / 2, s = SPRITE / 2, r = s * 0.2;
   sctx.beginPath();
@@ -30,9 +31,9 @@ if (sctx) {
   sctx.arcTo(c, c - s, c + s, c, r);
   sctx.closePath();
   sctx.clip();
-  sctx.fillStyle = "#fff";
+  sctx.fillStyle = blue;
   sctx.fillRect(0, 0, c, SPRITE);
-  sctx.fillStyle = "rgb(255 255 255 / 0.5)";
+  sctx.globalAlpha = 0.5;
   sctx.fillRect(c, 0, c, SPRITE);
 }
 

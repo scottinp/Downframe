@@ -2,6 +2,12 @@
 
 What changed for people using [downframe.net](https://downframe.net). Newest first.
 
+## 1.2.1, 2026-10-13
+
+- Changed: the menu links scroll smoothly, and Convert shows a short progress bar.
+- Changed: more blue on the page: the headline and the moving keyframes behind it.
+- Analytics: the site is verified with Google Search Console
+
 ## 1.2.0, 2026-10-12
 
 - Added: convert a whole preset pack at once. Drop several `.ffx` files and download them all as one `.zip`. Presets that already open in the version you pick are included unchanged. Add more files or remove any before converting.
