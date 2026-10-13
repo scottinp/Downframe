@@ -33,13 +33,28 @@ type Row = { name: string; meta: string; bad?: boolean };
 
 // Shared "files converted" total (api/count.ts). Stays hidden when the API is missing (vite dev) or down.
 const counter = $("converted");
+const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let shown = 0; // number on screen right now
+let run = 0; // a newer total cancels a count-up still running
+
+// Counts up from what's shown to the total over ~1.2 s, easing out.
+function countTo(total: number) {
+  $("stat").hidden = false;
+  $("converted-label").textContent = total === 1 ? "file converted so far" : "files converted so far";
+  const from = shown, start = performance.now(), id = ++run;
+  const step = (now: number) => {
+    if (id !== run) return;
+    const t = still ? 1 : Math.min(1, (now - start) / 1200);
+    shown = Math.round(from + (total - from) * (1 - (1 - t) ** 3));
+    counter.textContent = shown.toLocaleString("en-US");
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
 const count = (init?: RequestInit) => fetch("/api/count", init)
   .then((r) => (r.ok ? r.json() : null))
-  .then((d) => {
-    if (typeof d?.total !== "number" || d.total < 1) return;
-    counter.textContent = d.total.toLocaleString("en-US");
-    counter.parentElement!.parentElement!.hidden = false;
-  })
+  .then((d) => { if (typeof d?.total === "number" && d.total >= 1) countTo(d.total); })
   .catch(() => {});
 count();
 

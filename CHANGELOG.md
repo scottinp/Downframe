@@ -4,7 +4,8 @@ What changed for people using [downframe.net](https://downframe.net). Newest fir
 
 ## 1.2.1, 2026-10-13
 
-- Added: a counter under the converter showing how many files have been converted. Only the number is sent, never your files.
+- Added: a counter under the intro showing how many files have been converted. It counts up when the page opens and after each conversion. Only the number is sent, never your files.
+- Changed: the "How it works" button under the intro is replaced by the counter. The menu still links to it.
 - Changed: the menu links scroll smoothly, and Convert shows a short progress bar.
 - Changed: more blue on the page: the headline and the moving keyframes behind it.
 - Analytics: the site is verified with Google Search Console

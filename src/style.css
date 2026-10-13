@@ -53,7 +53,7 @@ h3 { font-size: 18px; margin-bottom: 8px; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
 /* small uppercase mono text: nav, buttons, labels, footer */
-.kicker, nav, .btn, .tag, .facts b, .field-label, footer {
+.kicker, nav, .btn, .tag, .facts b, .field-label, .stat-label, footer {
   font-family: var(--mono);
   font-size: 12.5px;
   letter-spacing: 0.08em;
@@ -121,7 +121,12 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 }
 .hero h1 .accent { color: var(--blue); }   /* blue on --bg is 4.3:1: large/bold text only */
 .promise { margin: 22px 0 0; max-width: 21em; }
-.hero .actions { margin-top: 26px; }
+.hero .actions { margin-top: 26px; align-items: center; gap: 20px; }
+/* files-converted counter (main.ts counts it up); blue is large and bold here, so it keeps contrast */
+.stat { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin: 0; }
+.stat[hidden] { display: none; }
+.stat-num { color: var(--blue); font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.stat-label { color: var(--text-2); }
 /* Side by side, the converter is already in view; the jump link only helps once it stacks below. */
 @media (min-width: 761px) { .hero .actions .primary { display: none; } }
 
@@ -240,8 +245,7 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 
 .intro { padding: 8px 0 40px; }
 .facts {
-  /* one column per visible item, so the hidden counter leaves no gap */
-  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px 32px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px;
   border-top: 1px solid var(--line); padding-top: 22px;
 }
 .facts b { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-2); }
@@ -271,7 +275,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: 
 @media (max-width: 760px) {
   .hero > .wrap { grid-template-columns: 1fr; gap: 24px; }
   .hero .copy { padding-top: 0; }
-  .facts { grid-auto-flow: row; grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; }
   .panel { transform: none; animation: none; }
   .layer.tabs, .layer.body { transform: none; }
 }
