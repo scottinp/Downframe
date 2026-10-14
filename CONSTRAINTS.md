@@ -12,8 +12,8 @@ Failing checks block handing work back. Never weaken a rule to make a change pas
 ## Enforced (`npm run check:task`, ~5 s, budget 30 s)
 | Rule | Limit | Today (2026-10-11) | Why |
 |---|---|---|---|
-| JS gzip | ≤ 6000 B | 4668 (2026-10-13) | Started at 3000 (2026-10-11). Raised to 4000 on 2026-10-12 (user OK) for batch upload + zip writer, then to 5000 the same day (user OK) for adding files to a batch. Raised to 6000 on 2026-10-13 (user OK) for the animated "How it works" byte strip. |
-| CSS gzip | ≤ 4000 B | 2717 (2026-10-13) | Started at 2500. Raised to 3000 on 2026-10-12 (user OK), same reason. Raised to 4000 on 2026-10-13 (user OK) for the byte strip. |
+| JS gzip | ≤ 7000 B | 6530 (2026-10-14) | Started at 3000 (2026-10-11). Raised to 4000 on 2026-10-12 (user OK) for batch upload + zip writer, then to 5000 the same day (user OK) for adding files to a batch. Raised to 6000 on 2026-10-13 (user OK) for the animated "How it works" byte strip. Raised to 7000 on 2026-10-14 (user OK) for `.aep` project support (trimming, plugin scan, messages). |
+| CSS gzip | ≤ 4000 B | 3713 (2026-10-14) | Started at 2500. Raised to 3000 on 2026-10-12 (user OK), same reason. Raised to 4000 on 2026-10-13 (user OK) for the byte strip. |
 | dist total raw | ≤ 66000 B | 64595 | Catches a large new image or font. |
 | Built `index.html` has CSP exactly `connect-src 'self'` | present | present | File bytes can't reach any third party. Was `'none'`; loosened to `'self'` on 2026-10-11 (user OK) so Vercel Analytics can post to its same-origin `/_vercel/insights` endpoint. |
 
