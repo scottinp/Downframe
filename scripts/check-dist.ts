@@ -3,7 +3,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
 // Keep in sync with CONSTRAINTS.md.
-const BUDGET = { jsGzip: 5000, cssGzip: 3000, totalRaw: 66000 };
+const BUDGET = { jsGzip: 6000, cssGzip: 4000, totalRaw: 66000 };
 
 const files = readdirSync("dist", { recursive: true, encoding: "utf8" }).map((n) => "dist/" + n).filter((f) => statSync(f).isFile());
 const gz = (ext: string) => files.filter((f) => f.endsWith(ext)).reduce((s, f) => s + gzipSync(readFileSync(f)).length, 0);

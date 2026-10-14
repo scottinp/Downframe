@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downframe: How it works visual (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Schibsted+Grotesk:wght@400;500;700&display=swap">
+<style>
+:root {
+  --bg: #333333; --panel: #3B3B3B; --line: #4A4A4A; --line2: #5C5C5C;
+  --text: #FFFFFF; --text2: #C4C4C4; --dim: #8A8A8A; --blue: #3899FF; --pink: #CFB3CD; --ink: #1F1F1F;
+  --sans: "Schibsted Grotesk", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+.kicker, .lbl, .status { font-family: var(--mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; }
+
+section { padding: 88px 0; }
+.kicker { display: block; margin-bottom: 22px; color: var(--text2); }
+h2 { margin: 0 0 14px; font-size: clamp(1.8rem, 3.8vw, 2.7rem); font-weight: 500; line-height: 1.05; letter-spacing: -.02em; max-width: 16em; }
+.lead { margin: 0 0 32px; max-width: 36em; color: var(--text2); }
+.kw { color: var(--pink); font-weight: 700; }
+
+/* ---------- the visual ---------- */
+.viz { margin: 0; }
+.card {
+  display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+  padding: 40px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+}
+.file { flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fname { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+
+.stamp { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.lbl { color: var(--text2); }
+
+/* byte strip: a few bytes either side of the version stamp */
+.strip { --fs: clamp(24px, 6.5vw, 44px); font-family: var(--mono); font-size: var(--fs); line-height: 1; }
+.offs, .row { display: flex; }
+.offs span, .row .cell { width: 2.6ch; flex: none; display: flex; justify-content: center; }
+.offs .gap, .row .more { width: 1.8ch; }
+.offs { margin-bottom: .55em; color: var(--dim); }
+.offs i { font-style: normal; font-size: max(10px, .34em); }   /* small text, but the cell keeps the big size's width */
+.offs .hot { color: var(--text2); }
+
+.row { position: relative; height: 1.7em; align-items: center; }
+.cell span { display: inline-block; position: relative; white-space: nowrap; min-width: 2ch; padding: .2em .22em; border-radius: 6px; text-align: center; color: var(--dim); }
+.cell.ctx span { color: #9A9A9A; }
+.more { color: #6E6E6E; justify-content: center; display: flex; flex: none; transform: translateY(-.22em); }
+
+/* the two version bytes */
+.cell.v span { color: var(--ink); background: var(--blue); outline: 1px solid var(--blue); font-weight: 700; }
+.cell.v.is-before span { color: var(--text); background: transparent; outline: 1px solid var(--line2); }
+.cell.v.erasing span { color: var(--text); background: rgba(255,255,255,.06); outline: 1px dashed var(--text2); }
+.cell.v span { transition: transform .28s cubic-bezier(.2,.8,.2,1); }
+/* typing cursor sits on top of the cell, so it can never push the text onto a second line */
+.cell.v.typing span::after { content: ""; position: absolute; right: .12em; top: .22em; bottom: .22em; width: .08em; background: var(--blue); }
+
+/* the write head that scans along the strip */
+.head {
+  position: absolute; top: -.18em; bottom: -.18em; left: 0; width: 2.6ch;
+  border-radius: 8px; border: 2px solid var(--blue); background: rgba(56,153,255,.10);
+  opacity: 0; transition: left .18s ease, opacity .25s ease; pointer-events: none;
+}
+.head.on { opacity: 1; }
+
+.ver { font-size: clamp(20px, 3vw, 26px); font-weight: 700; letter-spacing: -.01em; color: var(--blue); min-height: 1.3em; }
+.ver.is-before { color: var(--text); }
+.ver .cur { display: inline-block; width: 2px; height: .9em; margin-left: 2px; vertical-align: -.1em; background: var(--blue); }
+.status { color: var(--text2); min-height: 1.6em; }
+.status.done { color: var(--text); }
+
+.strip.fading { transition: opacity .35s ease; opacity: .35; }
+
+.note { margin: 14px 0 0; color: var(--text2); font-size: 15px; }
+
+/* static before / after, only with reduced motion */
+.static { display: none; flex-direction: column; gap: 22px; }
+@media (prefers-reduced-motion: reduce) {
+  .live { display: none; }
+  .static { display: flex; }
+}
+
+/* ---------- cards under the visual ---------- */
+.cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 16px; }
+.tcard { padding: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.tcard h3 { margin: 0 0 8px; font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
+.tcard p { margin: 0; color: var(--text2); font-size: 16px; }
+
+@media (max-width: 720px) {
+  .wrap { padding: 0 16px; }
+  section { padding: 56px 0; }
+  .card { padding: 24px 16px; gap: 20px; flex-direction: column; align-items: stretch; }
+  .file { flex-direction: row; gap: 10px; }
+  .file svg { width: 36px; height: 45px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <section id="how">
+    <div class="wrap">
+      <span class="kicker">01 / How it works</span>
+      <h2>It changes the version stamp, not your animation.</h2>
+      <p class="lead">Downframe rewrites two bytes in the header of your <span class="kw">.ffx</span> preset. Every other byte stays exactly as it was.</p>
+
+      <figure class="viz" aria-describedby="viz-desc">
+        <p id="viz-desc" class="sr">The version stamp in the file header changes from After Effects 2026 to 2021; every other byte stays the same.</p>
+        <div class="card" aria-hidden="true">
+          <div class="file">
+            <svg viewBox="0 0 96 120" width="80" height="100">
+              <path d="M10 4H62L92 34V110A6 6 0 0 1 86 116H10A6 6 0 0 1 4 110V10A6 6 0 0 1 10 4Z" fill="#444444" stroke="#5C5C5C" stroke-width="1.5"/>
+              <path d="M62 4V28A6 6 0 0 0 68 34H92" fill="#4F4F4F" stroke="#5C5C5C" stroke-width="1.5" stroke-linejoin="round"/>
+              <text x="48" y="80" text-anchor="middle" fill="#CFB3CD" font-family="JetBrains Mono, monospace" font-weight="700" font-size="17">.ffx</text>
+            </svg>
+            <span class="fname">preset.ffx</span>
+          </div>
+
+          <!-- Animated version. The markup is the finished state, so it reads correctly without JavaScript. -->
+          <div class="stamp live" id="live">
+            <div class="strip" id="strip">
+              <div class="offs">
+                <span class="gap"></span>
+                <span><i>1a</i></span><span class="hot"><i>1b</i></span><span><i>1c</i></span><span><i>1d</i></span><span><i>1e</i></span><span class="hot"><i>1f</i></span><span><i>20</i></span>
+                <span class="gap"></span>
+              </div>
+              <div class="row" id="row">
+                <span class="more">…</span>
+                <span class="cell ctx"><span>00</span></span>
+                <span class="cell v" data-before="61" data-after="5d"><span>5d</span></span>
+                <span class="cell ctx"><span>00</span></span>
+                <span class="cell ctx"><span>00</span></span>
+                <span class="cell ctx"><span>00</span></span>
+                <span class="cell v" data-before="02" data-after="19"><span>19</span></span>
+                <span class="cell ctx"><span>01</span></span>
+                <span class="more">…</span>
+                <span class="head" id="head"></span>
+              </div>
+            </div>
+            <div class="ver" id="ver">After Effects 2021</div>
+            <div class="status done" id="status">2 bytes changed. Everything else untouched.</div>
+          </div>
+
+          <!-- Reduced motion: before and after, stacked, no animation. -->
+          <div class="stamp static">
+            <div>
+              <span class="lbl">Before</span>
+              <div class="strip"><div class="row">
+                <span class="more">…</span><span class="cell ctx"><span>00</span></span><span class="cell v is-before"><span>61</span></span><span class="cell ctx"><span>00</span></span><span class="cell ctx"><span>00</span></span><span class="cell ctx"><span>00</span></span><span class="cell v is-before"><span>02</span></span><span class="cell ctx"><span>01</span></span><span class="more">…</span>
+              </div></div>
+              <div class="ver is-before">After Effects 2026</div>
+            </div>
+            <div>
+              <span class="lbl">After</span>
+              <div class="strip"><div class="row">
+                <span class="more">…</span><span class="cell ctx"><span>00</span></span><span class="cell v"><span>5d</span></span><span class="cell ctx"><span>00</span></span><span class="cell ctx"><span>00</span></span><span class="cell ctx"><span>00</span></span><span class="cell v"><span>19</span></span><span class="cell ctx"><span>01</span></span><span class="more">…</span>
+              </div></div>
+              <div class="ver">After Effects 2021</div>
+            </div>
+          </div>
+        </div>
+        <p class="note">That is the whole change. The rest of the file is copied as it is.</p>
+      </figure>
+
+      <div class="cards">
+        <div class="tcard"><h3>Rewrites the version</h3><p>Every preset records the After Effects version that saved it. Downframe finds that record and sets it to the version you picked.</p></div>
+        <div class="tcard"><h3>Checks the file</h3><p>Before you download, it confirms the file still reads correctly and the version was actually changed.</p></div>
+        <div class="tcard"><h3>Does not translate</h3><p>Anything the older version does not understand is left as it is, so test the result in your version.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var live = document.getElementById("live");
+  var strip = document.getElementById("strip");
+  var row = document.getElementById("row");
+  var head = document.getElementById("head");
+  var ver = document.getElementById("ver");
+  var status = document.getElementById("status");
+  var cells = Array.prototype.slice.call(row.querySelectorAll(".cell"));
+
+  var visible = false;
+  var running = false;
+  var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+  function setVer(text, before) {
+    ver.textContent = text;
+    ver.classList.toggle("is-before", before);
+  }
+
+  function reset() {
+    cells.forEach(function (c) {
+      if (!c.dataset.before) return;
+      c.className = "cell v is-before";
+      c.firstChild.textContent = c.dataset.before;
+    });
+    setVer("After Effects 2026", true);
+    status.textContent = "Reading header";
+    status.classList.remove("done");
+    head.classList.remove("on");
+    head.style.left = cells[0].offsetLeft + "px";
+  }
+
+  async function rewriteByte(c) {
+    var span = c.firstChild, before = c.dataset.before, after = c.dataset.after;
+    status.textContent = "Rewriting version stamp";
+    c.className = "cell v erasing";
+    await wait(260);
+    span.textContent = before.slice(0, 1); await wait(110);   // backspace
+    span.textContent = "  "; await wait(160);
+    c.className = "cell v erasing typing";
+    span.textContent = after.slice(0, 1); await wait(140);    // type the new value
+    span.textContent = after; await wait(120);
+    c.className = "cell v";
+    await wait(260);
+  }
+
+  async function retypeVersion() {
+    var from = "After Effects 2026", to = "After Effects 2021", base = "After Effects 20";
+    for (var i = from.length; i >= base.length; i--) {
+      ver.innerHTML = from.slice(0, i) + '<span class="cur"></span>'; await wait(70);
+    }
+    ver.classList.remove("is-before");
+    for (var j = base.length + 1; j <= to.length; j++) {
+      ver.innerHTML = to.slice(0, j) + '<span class="cur"></span>'; await wait(90);
+    }
+    ver.textContent = to;
+  }
+
+  async function cycle() {
+    reset();
+    await wait(1100);
+    head.classList.add("on");
+    for (var i = 0; i < cells.length; i++) {
+      head.style.left = cells[i].offsetLeft + "px";
+      await wait(cells[i].dataset.before ? 260 : 150);
+      if (cells[i].dataset.before) await rewriteByte(cells[i]);
+      else status.textContent = "Reading header";
+    }
+    head.classList.remove("on");
+    await retypeVersion();
+    status.textContent = "2 bytes changed. Everything else untouched.";
+    status.classList.add("done");
+    await wait(3200);
+    strip.classList.add("fading"); ver.style.opacity = ".35";
+    await wait(380);
+    strip.classList.remove("fading"); ver.style.opacity = "";
+  }
+
+  async function loop() {
+    if (running) return;
+    running = true;
+    while (visible) { await cycle(); }
+    running = false;
+  }
+
+  new IntersectionObserver(function (entries) {
+    visible = entries[0].isIntersecting;
+    if (visible) loop();
+  }, { threshold: 0.5 }).observe(live);
+
+  window.addEventListener("resize", function () {
+    if (!head.classList.contains("on")) head.style.left = cells[0].offsetLeft + "px";
+  });
+})();
+</script>
+</body>
+</html>

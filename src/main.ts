@@ -1,6 +1,8 @@
 import { convert, detect, SUPPORTED } from "./converter/index.ts";
 import { zip } from "./zip.ts";
 import "./ui/keyframe-grid.ts";
+import "./ui/byte-strip.ts";
+import "./ui/reveal.ts";
 
 const MAX_BYTES = 50 * 1024 * 1024; // presets are a few KB; refuse before reading a huge file into memory
 const MAX_TOTAL = 200 * 1024 * 1024; // same guard for a whole batch

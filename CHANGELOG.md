@@ -4,12 +4,9 @@ What changed for people using [downframe.net](https://downframe.net). Newest fir
 
 ## 1.2.1, 2026-10-13
 
-- Added: a counter under the intro showing how many files have been converted. It counts up when the page opens and after each conversion. Only the number is sent, never your files.
-- Changed: drop a whole folder without sorting it first. Presets that can't be converted, such as ones from a version Downframe doesn't know, now go in the download unchanged instead of being left out.
-- Changed: the "How it works" button under the intro is replaced by the counter. The menu still links to it.
-- Changed: the menu links scroll smoothly, and Convert shows a short progress bar.
-- Changed: more blue on the page: the headline and the moving keyframes behind it.
-- Analytics: the site is verified with Google Search Console
+- Added: drop a whole folder without sorting it first. Presets that can't be converted go in the download unchanged instead of being left out.
+- Added: a counter showing how many files have been converted. Only the number is sent, never your files.
+- Changed: a refreshed page. A clearer intro with the supported versions (2021–2026), an animated "How it works" that shows the two bytes Downframe changes, and smaller touches like more blue and smoother scrolling.
 
 ## 1.2.0, 2026-10-12
 

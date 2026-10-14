@@ -16,6 +16,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap">
 <link rel="stylesheet" href="/src/style.css">
+<!-- Before first paint, so sections hidden for the scroll reveal (src/ui/reveal.ts) never flash. Without JS they just show. -->
+<script>document.documentElement.classList.add("js")</script>
 <!-- Vercel Web Analytics: served by Vercel in production; 404s harmlessly in dev. -->
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -43,9 +45,9 @@
     <div class="wrap">
 
       <div class="copy">
-        <span class="kicker">Downgrades Adobe After Effects files.</span>
+        <span class="kicker">Adobe After Effects preset converter</span>
         <h1>Open it in your <span class="accent">version</span>.</h1>
-        <p class="promise">Drop in an After Effects preset (<span class="kw-ffx">.ffx</span>) saved in a newer version and get a copy that opens in an older one. It runs in your browser, so the file never leaves your computer.</p>
+        <p class="promise">Convert an After Effects preset (<span class="kw-ffx">.ffx</span>) to an older version, so it opens in the After Effects you have. It runs in your browser, so the file never leaves your computer.</p>
         <div class="actions">
           <a class="btn primary" href="#converter">Convert a preset</a>
           <p class="stat" id="stat" hidden><span class="stat-num" id="converted">0</span> <span class="stat-label" id="converted-label">files converted so far</span></p>
@@ -129,7 +131,7 @@
     <div class="wrap">
       <div class="facts">
         <div><b>Files</b><span><span class="kw-ffx">.ffx</span> animation presets</span></div>
-        <div><b>Direction</b><span>Newer to older only</span></div>
+        <div><b>Direction</b><span>Newer to older only</span><small>Supports versions <b>2021–2026</b></small></div>
         <div><b>Privacy</b><span>No app to install. Your file stays on your computer.</span></div>
         <div><b>Cost</b><span>Free, no account</span></div>      </div>
     </div>
@@ -139,20 +141,66 @@
     <div class="wrap">
       <span class="kicker">01 / How it works</span>
       <h2>It changes the version stamp, not your animation.</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>Rewrites the version</h3>
-          <p>Every preset records the After Effects version that saved it. Downframe finds that record and sets it to the version you picked.</p>
+
+      <!-- Byte strip, animated by src/ui/byte-strip.ts. Real bytes 0x1a–0x20 of a 2026 preset converted to 2021. -->
+      <figure class="bytes" aria-describedby="bytes-desc">
+        <p id="bytes-desc" class="sr">The version stamp in the file header changes from After Effects 2026 to 2021; every other byte stays the same.</p>
+        <div class="bytes-card" aria-hidden="true">
+          <div class="bytes-file">
+            <svg viewBox="0 0 96 120" width="80" height="100">
+              <path d="M10 4H62L92 34V110A6 6 0 0 1 86 116H10A6 6 0 0 1 4 110V10A6 6 0 0 1 10 4Z" fill="#444444" stroke="#5C5C5C" stroke-width="1.5"/>
+              <path d="M62 4V28A6 6 0 0 0 68 34H92" fill="#4F4F4F" stroke="#5C5C5C" stroke-width="1.5" stroke-linejoin="round"/>
+              <text x="48" y="80" text-anchor="middle" fill="#CFB3CD" font-family="JetBrains Mono, monospace" font-weight="700" font-size="17">.ffx</text>
+            </svg>
+            preset.ffx
+          </div>
+
+          <!-- The markup is the finished state, so it reads correctly without JavaScript. -->
+          <div class="stamp live">
+            <div class="strip">
+              <div class="offs">
+                <span class="gap"></span>
+                <span><i>1a</i></span><span class="hot"><i>1b</i></span><span><i>1c</i></span><span><i>1d</i></span><span><i>1e</i></span><span class="hot"><i>1f</i></span><span><i>20</i></span>
+                <span class="gap"></span>
+              </div>
+              <div class="row">
+                <span class="more">…</span>
+                <span class="cell"><span>00</span></span>
+                <span class="cell v" data-before="61" data-after="5d"><span>5d</span></span>
+                <span class="cell"><span>00</span></span>
+                <span class="cell"><span>00</span></span>
+                <span class="cell"><span>00</span></span>
+                <span class="cell v" data-before="02" data-after="19"><span>19</span></span>
+                <span class="cell"><span>01</span></span>
+                <span class="more">…</span>
+                <span class="head"></span>
+              </div>
+            </div>
+            <div class="ver">After Effects <span class="yr now">2021</span></div>
+            <div class="status done"><svg class="tick" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4L8.8 13.2L14.2 7.6"/></svg><span>2 bytes changed. Everything else untouched.</span></div>
+          </div>
+
+          <!-- Reduced motion: before and after, stacked, no animation. -->
+          <div class="stamp static">
+            <div>
+              <span class="lbl">Before</span>
+              <div class="strip"><div class="row">
+                <span class="more">…</span><span class="cell"><span>00</span></span><span class="cell v is-before"><span>61</span></span><span class="cell"><span>00</span></span><span class="cell"><span>00</span></span><span class="cell"><span>00</span></span><span class="cell v is-before"><span>02</span></span><span class="cell"><span>01</span></span><span class="more">…</span>
+              </div></div>
+              <div class="ver">After Effects <span class="yr">2026</span></div>
+            </div>
+            <div>
+              <span class="lbl">After</span>
+              <div class="strip"><div class="row">
+                <span class="more">…</span><span class="cell"><span>00</span></span><span class="cell v"><span>5d</span></span><span class="cell"><span>00</span></span><span class="cell"><span>00</span></span><span class="cell"><span>00</span></span><span class="cell v"><span>19</span></span><span class="cell"><span>01</span></span><span class="more">…</span>
+              </div></div>
+              <div class="ver">After Effects <span class="yr now">2021</span></div>
+              <div class="status done"><svg class="tick" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.5"/><path d="M6 10.4L8.8 13.2L14.2 7.6"/></svg><span>2 bytes changed. Everything else untouched.</span></div>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <h3>Checks the file</h3>
-          <p>Before you download, it confirms the file still reads correctly and the version was actually changed. If not, you get an explanation and no file.</p>
-        </div>
-        <div class="card">
-          <h3>Does not translate</h3>
-          <p>Anything the older version does not understand is left as it is. The preset may open with properties missing, which is why you should test every converted preset in your version.</p>
-        </div>
-      </div>
+        <p class="note">Only these two bytes change. The rest of your <span class="kw-ffx">.ffx</span> is copied as it was, and the file is checked before you can download it.</p>
+      </figure>
     </div>
   </section>
 
