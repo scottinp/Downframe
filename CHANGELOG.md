@@ -2,6 +2,13 @@
 
 What changed for people using [downframe.net](https://downframe.net). Newest first.
 
+## 1.3.0, 2026-10-14
+
+- Added: convert After Effects projects (`.aep`) to older versions, 2026 down to 2021, the same versions as presets. Projects saved in 2023 or later are rebuilt for 2022 and 2021, which store layers differently.
+- Added: before converting, Downframe lists any third-party plugin effects in a project, since they can crash an older After Effects.
+- Fixed: presets and projects saved in any update of a year are recognised, and files converted to 2023, 2024 or 2025 open in every update of that version. Files with text layers no longer fail the safety check.
+- Changed: files up to 500 MB (1 GB per batch), so real projects fit.
+
 ## 1.2.1, 2026-10-13
 
 - Added: drop a whole folder without sorting it first. Presets that can't be converted go in the download unchanged instead of being left out.

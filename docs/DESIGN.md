@@ -4,7 +4,7 @@ Version 1, October 2026
 
 ## Overview
 
-Downframe is a browser-based tool that downgrades Adobe After Effects animation presets (`.ffx`) and, later, project files (`.aep`) so they open in older versions of After Effects.
+Downframe is a browser-based tool that downgrades Adobe After Effects animation presets (`.ffx`) and project files (`.aep`, since 1.3.0) so they open in older versions of After Effects.
 
 It is downgrade-only. After Effects already opens files from older versions, so upgrading needs no tool.
 
@@ -58,7 +58,6 @@ Planned stack: static site, client-side TypeScript, no backend.
 ## Out of scope
 
 - Upgrading files
-- `.aep` conversion (for now)
 - Recreating effects that don't exist in the target version
 - Fixing missing third-party plugins
 - Accounts, servers, file storage

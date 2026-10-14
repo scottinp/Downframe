@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { chunksFit, convert, detect, patch, SUPPORTED, VERSIONS } from "../src/converter/index.ts";
+import { chunksFit, convert, detect, patch, SUPPORTED, thirdPartyEffects, VERSIONS } from "../src/converter/index.ts";
 
 const root = "tests/fixtures/ffx";
 const fixtures = readdirSync(root).flatMap((ver) =>
@@ -12,7 +12,7 @@ const fixtures = readdirSync(root).flatMap((ver) =>
 describe("detect", () => {
   for (const { ver, file } of fixtures) {
     it(`${file} is version ${ver}`, () => {
-      expect(detect(new Uint8Array(readFileSync(file)))).toEqual({ ok: true, version: ver });
+      expect(detect(new Uint8Array(readFileSync(file)))).toEqual({ ok: true, version: ver, kind: "ffx" });
     });
   }
 
@@ -43,7 +43,7 @@ describe("other updates within a year", () => {
 
   for (const ver of ["23", "24", "25", "26"]) {
     it(`a ${ver} preset from another update is still ${ver}`, () => {
-      expect(detect(withB(ver, 0x05))).toEqual({ ok: true, version: ver });
+      expect(detect(withB(ver, 0x05))).toEqual({ ok: true, version: ver, kind: "ffx" });
     });
   }
 
@@ -56,7 +56,7 @@ describe("other updates within a year", () => {
     ["18", 0x20, null], // 0x1e–0x27 has never been seen: unknown
   ] as const) {
     it(`a 0x5d file with update value 0x${b.toString(16)} is ${expected ?? "unknown"}`, () => {
-      expect(detect(withB(ver, b))).toEqual(expected ? { ok: true, version: expected } : { ok: false, code: "unknown-version" });
+      expect(detect(withB(ver, b))).toEqual(expected ? { ok: true, version: expected, kind: "ffx" } : { ok: false, code: "unknown-version" });
     });
   }
 
@@ -79,7 +79,7 @@ describe("patch", () => {
         if (!result.ok) throw new Error(result.code);
 
         expect(input).toEqual(before);
-        expect(detect(result.bytes)).toEqual({ ok: true, version: target });
+        expect(detect(result.bytes)).toEqual({ ok: true, version: target, kind: "ffx" });
         expect(result.bytes.length).toBe(input.length);
         for (let i = 0; i < input.length; i++) {
           if (i >= 0x18 && i < 0x22) continue;
@@ -122,7 +122,7 @@ describe("convert", () => {
       it(`${from} → ${to} converts`, () => {
         const result = convert(read(from), to);
         if (!result.ok) throw new Error(result.code);
-        expect(detect(result.bytes)).toEqual({ ok: true, version: to });
+        expect(detect(result.bytes)).toEqual({ ok: true, version: to, kind: "ffx" });
       });
     }
   }
@@ -183,5 +183,106 @@ describe("chunksFit", () => {
     const bytes = new Uint8Array(readFileSync("tests/fixtures/aep/26/2026 - text.aep"));
     const view = new DataView(bytes.buffer);
     expect(chunksFit(view, 0x0c, 8 + view.getUint32(4, false))).toBe(true);
+  });
+});
+
+describe(".aep projects", () => {
+  const aepRoot = "tests/fixtures/aep";
+  const projects = readdirSync(aepRoot).flatMap((ver) =>
+    readdirSync(`${aepRoot}/${ver}`).filter((f) => f.endsWith(".aep")).map((f) => ({ ver, file: `${aepRoot}/${ver}/${f}` })),
+  );
+  const load = (file: string) => new Uint8Array(readFileSync(file));
+  // Sizes of every layer record (`ldta`) in a project.
+  const layerSizes = (bytes: Uint8Array) => {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), sizes: number[] = [];
+    const tag = (at: number) => String.fromCharCode(...bytes.subarray(at, at + 4));
+    const walk = (start: number, end: number) => {
+      for (let at = start; at < end;) {
+        const size = view.getUint32(at + 4, false);
+        if (tag(at) === "LIST" && tag(at + 8) !== "btdk") walk(at + 12, at + 8 + size);
+        if (tag(at) === "ldta") sizes.push(size);
+        at += 8 + size + (size % 2);
+      }
+    };
+    walk(12, 8 + view.getUint32(4, false));
+    return sizes;
+  };
+
+  for (const { ver, file } of projects) {
+    it(`${file} is a version ${ver} project`, () => {
+      expect(detect(load(file))).toEqual({ ok: true, version: ver, kind: "aep" });
+    });
+
+    for (const to of SUPPORTED[ver] ?? []) {
+      it(`${file} → ${to}`, () => {
+        const input = load(file), before = input.slice();
+        const result = convert(input, to);
+        if (!result.ok) throw new Error(result.code);
+        expect(Buffer.from(input).equals(before)).toBe(true); // original untouched (direct compare: projects are MBs)
+        expect(detect(result.bytes)).toEqual({ ok: true, version: to, kind: "aep" });
+        if (Number(to) <= 22) {
+          // 2022 and older: every layer record trimmed back to 160 bytes, 4 bytes shorter per trimmed record.
+          const trimmed = layerSizes(input).filter((n) => n === 164).length;
+          expect(layerSizes(result.bytes).every((n) => n === 160)).toBe(true);
+          expect(result.bytes.length).toBe(input.length - 4 * trimmed);
+        } else {
+          // Same generation: only the version stamp changes (svap value, version pair, version word).
+          expect(result.bytes.length).toBe(input.length);
+          for (let i = 0; i < input.length; i++) {
+            if ((i >= 0x14 && i < 0x18) || (i >= 0x20 && i < 0x28)) continue;
+            if (result.bytes[i] !== input[i]) throw new Error(`byte 0x${i.toString(16)} changed`);
+          }
+        }
+      });
+    }
+  }
+
+  it("supported pairs match the aep rows in COMPATIBILITY.md", () => {
+    const log = readFileSync("docs/COMPATIBILITY.md", "utf8");
+    const opens = new Set([...log.matchAll(/^\| aep (\d+) → (\d+)(?: \([^)]*\))? \| opens/gm)].map((m) => `${m[1]}→${m[2]}`));
+    const supported = Object.entries(SUPPORTED).flatMap(([from, tos]) => tos.map((to) => `${from}→${to}`));
+    expect(supported.filter((p) => !opens.has(p))).toEqual([]);
+  });
+
+  it("a layer using a 2023 track matte can't go to 2022 or older, but can within 2023+", () => {
+    const bytes = load(`${aepRoot}/26/2026.aep`);
+    const view = new DataView(bytes.buffer);
+    const at = Buffer.from(bytes).indexOf("ldta") + 8; // first layer record's data
+    view.setUint32(at + 160, 7, false); // matte layer id 7
+    expect(convert(bytes, "22")).toEqual({ ok: false, code: "matte-layer" });
+    expect(convert(bytes, "25").ok).toBe(true);
+  });
+
+  it("lists third-party effects by match name, skipping Adobe and bundled Cycore effects", () => {
+    const enc = (s: string) => new TextEncoder().encode(s);
+    const chunk = (type: string, ...parts: Uint8Array[]) => {
+      const body = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+      parts.reduce((at, p) => (body.set(p, at), at + p.length), 0);
+      const out = new Uint8Array(8 + body.length + (body.length % 2));
+      out.set(enc(type));
+      new DataView(out.buffer).setUint32(4, body.length, false);
+      out.set(body, 8);
+      return out;
+    };
+    const tdmn = (name: string) => { const b = new Uint8Array(40); b.set(enc(name)); return chunk("tdmn", b); };
+    const effect = (name: string) => chunk("LIST", enc("EfDf"), tdmn(name), chunk("LIST", enc("sspc")));
+    // A real project's header (version stamp) followed by an effect list.
+    const base = load(`${aepRoot}/26/2026.aep`);
+    const list = chunk("LIST", enc("EfdG"), effect("ADBE Glo2"), effect("CC Particle World"), effect("S_Glint"), effect("FC NITRATE"));
+    const body = new Uint8Array(0x34 + list.length);
+    body.set(base.subarray(0, 0x34)); // RIFX, Egg!, svap, head (ends at 0x34)
+    body.set(list, 0x34);
+    new DataView(body.buffer).setUint32(4, body.length - 8, false);
+    expect(thirdPartyEffects(body)).toEqual(["S_Glint", "FC NITRATE"]);
+    expect(thirdPartyEffects(load(`${aepRoot}/26/2026 - text.aep`))).toEqual([]);
+    expect(thirdPartyEffects(load(fixtures[0].file))).toEqual([]); // presets aren't scanned
+  });
+
+  it("a file too short to hold a version is unknown, not an error", () => {
+    const bytes = new Uint8Array(0x20);
+    bytes.set(new TextEncoder().encode("RIFX"));
+    new DataView(bytes.buffer).setUint32(4, 0x18, false);
+    bytes.set(new TextEncoder().encode("Egg!"), 8);
+    expect(detect(bytes)).toEqual({ ok: false, code: "unknown-version" });
   });
 });

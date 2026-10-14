@@ -1,23 +1,26 @@
-import { convert, detect, SUPPORTED } from "./converter/index.ts";
+import { convert, detect, SUPPORTED, thirdPartyEffects, type Kind } from "./converter/index.ts";
 import { zip } from "./zip.ts";
 import "./ui/keyframe-grid.ts";
 import "./ui/byte-strip.ts";
 import "./ui/reveal.ts";
 
-const MAX_BYTES = 50 * 1024 * 1024; // presets are a few KB; refuse before reading a huge file into memory
-const MAX_TOTAL = 200 * 1024 * 1024; // same guard for a whole batch
+// Files are read into the tab's memory and copied once converted (plus a zip for batches), so refuse before reading
+// anything that could crash the tab. Presets are a few KB; projects can be hundreds of MB.
+const MAX_BYTES = 500 * 1024 * 1024;
+const MAX_TOTAL = 1024 * 1024 * 1024;
 // AE 17 = 2020 and 18 = 2021; Adobe then jumped to 22 = 2022, so later versions are 2000 + version.
 const year = (v: string) => String(Number(v) + (Number(v) < 22 ? 2003 : 2000));
 const label = (v: string) => `After Effects ${year(v)} (${v}.x)`;
 
 const ERRORS: Record<string, string> = {
   empty: "That file is empty.",
-  "not-riff": "That is not an After Effects preset (.ffx).",
+  "not-riff": "That is not an After Effects preset (.ffx) or project (.aep).",
   truncated: "That file looks cut off. Try downloading or exporting it again.",
-  "unknown-version": "This preset was saved in a version of After Effects that Downframe does not recognise yet.",
+  "unknown-version": "This file was saved in a version of After Effects that Downframe does not recognise yet.",
   "unsupported-pair": "That conversion has not been tested, so it is not offered.",
   "check-failed": "The converted file failed a check, so no file was made. Your original is unchanged.",
-  "too-large": "That file is too large to be a preset.",
+  "too-large": "That file is over 500 MB, too large to convert in the browser.",
+  "matte-layer": "Uses a 2023 track matte that 2022 and older can't read",
   "read-failed": "Could not read that file. Try choosing it again.",
 };
 const KEPT_UNKNOWN = "Unknown version, kept as is";
@@ -30,9 +33,10 @@ const target = $<HTMLSelectElement>("target");
 const error1 = $("error1");
 const error2 = $("error2");
 
-// A dropped file: readable presets have bytes + version, the rest keep the error code to show in their row.
-// A preset of an unknown version also keeps its bytes, so it can be passed through unchanged.
-type Item = { name: string; bytes?: Uint8Array; version?: string; code?: string };
+// A dropped file: readable ones have bytes + version + kind, the rest keep the error code to show in their row.
+// A file of an unknown version also keeps its bytes, so it can be passed through unchanged.
+// `plugins`: third-party effects in a project, which can crash an older After Effects.
+type Item = { name: string; bytes?: Uint8Array; version?: string; kind?: Kind; plugins?: string[]; code?: string };
 type Row = { name: string; meta: string; bad?: boolean };
 
 // Shared "files converted" total (api/count.ts). Stays hidden when the API is missing (vite dev) or down.
@@ -108,7 +112,7 @@ async function read(file: File): Promise<Item> {
     return { name: file.name, code: "read-failed" };
   }
   const detected = detect(bytes);
-  if (detected.ok) return { name: file.name, bytes, version: detected.version };
+  if (detected.ok) return { name: file.name, bytes, version: detected.version, kind: detected.kind, plugins: thirdPartyEffects(bytes) };
   return detected.code === "unknown-version" ? { name: file.name, bytes, code: detected.code } : { name: file.name, code: detected.code };
 }
 
@@ -120,7 +124,7 @@ async function load(files: File[]) {
   if (files.length === 0) return;
   const size = base.reduce((sum, it) => sum + (it.bytes?.length ?? 0), 0) + files.reduce((sum, f) => sum + f.size, 0);
   if (size > MAX_TOTAL) {
-    error.textContent = "Those files are too large to be presets. Try fewer at a time.";
+    error.textContent = "Those files add up to over 1 GB, too much to convert at once. Try fewer at a time.";
     return;
   }
   const added = await Promise.all(files.map(read));
@@ -133,27 +137,34 @@ function setItems(loaded: Item[]): boolean {
   const readable = loaded.filter((it) => it.version);
   if (readable.length === 0) {
     error1.textContent = loaded.length === 1 ? message(loaded[0].code!)
-      : loaded.some((it) => it.bytes) ? "Downframe does not recognise the version of any of these presets."
-      : "None of these files are presets Downframe can read.";
+      : loaded.some((it) => it.bytes) ? "Downframe does not recognise the version of any of these files."
+      : "None of these files are presets or projects Downframe can read.";
     return false;
   }
   const targets = [...new Set(readable.flatMap((it) => SUPPORTED[it.version!] ?? []))].sort((a, b) => Number(b) - Number(a));
   if (targets.length === 0) {
     error1.textContent = readable.length === 1
       ? `${label(readable[0].version!)} has no supported older version, so there is nothing to convert.`
-      : "None of these presets have a supported older version, so there is nothing to convert.";
+      : "None of these files have a supported older version, so there is nothing to convert.";
     return false;
   }
   items = loaded;
-  renderRows($("layers2"), items.map((it) => it.version ? { name: it.name, meta: `Saved in ${label(it.version)}` }
+  renderRows($("layers2"), items.map((it) => it.version ? { name: it.name, meta: describe(it) }
     : it.bytes ? { name: it.name, meta: KEPT_UNKNOWN }
     : { name: it.name, meta: message(it.code!), bad: true }), remove);
+  // Plugin warning: one line per project that uses third-party effects.
+  const risky = items.filter((it) => it.plugins?.length);
+  $("plugins").hidden = risky.length === 0;
+  $("plugin-list").replaceChildren(...risky.map((it) => Object.assign(document.createElement("li"), { textContent: `${it.name}: ${it.plugins!.join(", ")}` })));
   const picked = target.value;
   target.replaceChildren(...targets.map((v) => new Option(label(v), v)));
   if (targets.includes(picked)) target.value = picked;
   error2.textContent = "";
   return true;
 }
+
+const describe = (it: Item) => `${it.kind === "aep" ? "Project" : "Preset"} · Saved in ${label(it.version!)}`
+  + (it.plugins?.length ? ` · ${it.plugins.length} third-party effect${it.plugins.length > 1 ? "s" : ""}` : "");
 
 // Removing the last file, or every file that can be converted, goes back to step 1.
 function remove(i: number) {
@@ -203,7 +214,7 @@ function convertAll() {
   const to = target.value;
   outputs = [];
   let converted = 0;
-  // Presets that can't be converted still go in the download unchanged, so a whole folder can be dropped as is.
+  // Files that can't be converted still go in the download unchanged, so a whole folder can be dropped as is.
   const keep = (it: Item, meta: string): Row => {
     outputs.push({ name: it.name, bytes: new Uint8Array(it.bytes!) });
     return { name: it.name, meta };
@@ -211,12 +222,13 @@ function convertAll() {
   const rows = items.map((it): Row => {
     if (!it.bytes) return { name: it.name, meta: message(it.code!), bad: true };
     if (!it.version) return keep(it, KEPT_UNKNOWN);
-    // Already opens in the target: include the original, so the download has every preset that was dropped.
+    // Already opens in the target: include the original, so the download has every file that was dropped.
     if (Number(it.version) <= Number(to)) return keep(it, `Already opens in ${year(to)}, included as is`);
     const result = convert(it.bytes, to);
     if (!result.ok && result.code === "unsupported-pair") return keep(it, `No tested conversion to ${year(to)}, kept as is`);
+    if (!result.ok && result.code === "matte-layer") return keep(it, `${ERRORS["matte-layer"]}, kept as is`);
     if (!result.ok) return { name: it.name, meta: ERRORS[result.code] ?? `Conversion failed (${result.code}).`, bad: true };
-    const name = `${it.name.replace(/\.ffx$/i, "")}.ae${to}.ffx`;
+    const name = `${it.name.replace(/\.(ffx|aep)$/i, "")}.ae${to}.${it.kind}`;
     outputs.push({ name, bytes: result.bytes });
     converted++;
     return { name, meta: "Converted" };

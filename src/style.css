@@ -232,6 +232,8 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
   font-size: 15px; line-height: 1.5;
 }
 .warning svg { flex: none; margin-top: 2px; }
+.warning[hidden] { display: none; }
+.plugins ul { margin: 6px 0 0; padding-left: 18px; overflow-wrap: anywhere; }
 
 .done { display: flex; align-items: center; gap: 12px; }
 .done svg { color: var(--blue); }

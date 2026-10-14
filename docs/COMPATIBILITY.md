@@ -94,6 +94,21 @@ Crossing to 2022 or older: rebuild the chunk tree, trim every 164-byte `ldta` to
 | aep 26 → 18 | opens | The pair that failed with a stamp-only patch. | 2026-10-14 |
 | aep 26 → 22 (realistic, plugin effects removed) | opens | 236 layers trimmed, 944 bytes shorter. | 2026-10-14 |
 | aep 26 → 18 (realistic, plugin effects removed) | opens | 236 layers trimmed. | 2026-10-14 |
+| aep 25 → 22 | opens | 12 layers trimmed. | 2026-10-14 |
+| aep 24 → 22 | opens | 12 layers trimmed. | 2026-10-14 |
+| aep 25 → 18 | opens | 12 layers trimmed. | 2026-10-14 |
+| aep 24 → 18 | opens | 12 layers trimmed. | 2026-10-14 |
+| aep 23 → 18 | opens | 12 layers trimmed. | 2026-10-14 |
+| aep 22 → 18 | opens | Stamp only: 2022 already writes 160-byte `ldta`. | 2026-10-14 |
+
+| aep 26 → 22 (spot light, source id left 0xFFFFFFFF) | opens | Light intact. | 2026-10-14 |
+| aep 26 → 22 (spot light, source id reset to 0) | opens | Light intact. | 2026-10-14 |
+| aep 26 → 25 (realistic, plugin effects removed; update value 0x01) | opens | Converter output with the low update stamp. | 2026-10-14 |
+| aep 26 → 23 (realistic, plugin effects removed; update value 0x01) | opens | | 2026-10-14 |
+| aep 26 → 25 (text; update value 0x01) | opens | | 2026-10-14 |
+| aep 26 → 23 (text; update value 0x01) | opens | | 2026-10-14 |
+
+All 15 downgrade pairs among 26/25/24/23/22/18 now open for `.aep` (same set as `.ffx`). Lights need no special handling: 2022 accepts the 2023+ light source id (0xFFFFFFFF; py-aep: 0 before 23) as is.
 
 Reading: from 2023 on every layer's `ldta` chunk is 164 bytes (160 before), so 2022 and older reject a stamp-only patch; trimming fixes it. Newer chunk types (`ppSn`, `fmpl`, `PwCs`, `pcms`, `pdvc`, `psac`, …) were left in and older versions accepted them. Fixtures are different projects per version, so other chunk differences are partly content. All 6 pairs within 2023–2026 verified (26→25, 26→24, 26→23, 25→24, 25→23, 24→23).
 
