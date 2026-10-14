@@ -1,2 +1,6 @@
 node_modules
 dist
+
+# Real projects used for the .aep investigation: they reference personal files, keep them local only.
+tests/fixtures/aep/26/2026 - realistic.aep
+tests/fixtures/aep/26/2026 - no effects.aep

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { convert, detect, patch, SUPPORTED, VERSIONS } from "../src/converter/index.ts";
+import { chunksFit, convert, detect, patch, SUPPORTED, VERSIONS } from "../src/converter/index.ts";
 
 const root = "tests/fixtures/ffx";
 const fixtures = readdirSync(root).flatMap((ver) =>
@@ -31,6 +31,41 @@ describe("detect", () => {
     const bytes = sample.slice();
     bytes[0x1f] = 0xee;
     expect(detect(bytes)).toEqual({ ok: false, code: "unknown-version" });
+  });
+});
+
+describe("other updates within a year", () => {
+  const withB = (ver: string, b: number) => {
+    const bytes = new Uint8Array(readFileSync(fixtures.find((f) => f.ver === ver)!.file));
+    new DataView(bytes.buffer).setUint32(0x1c, b, false);
+    return bytes;
+  };
+
+  for (const ver of ["23", "24", "25", "26"]) {
+    it(`a ${ver} preset from another update is still ${ver}`, () => {
+      expect(detect(withB(ver, 0x05))).toEqual({ ok: true, version: ver });
+    });
+  }
+
+  // 2020–2022 share the first value; the second picks the year from the ranges seen per year.
+  for (const [ver, b, expected] of [
+    ["17", 0x16, "17"], // a later 2020 update
+    ["18", 0x1d, "18"], // a later 2021 update
+    ["22", 0x28, "22"], // an early 2022 update
+    ["22", 0x30, "22"],
+    ["18", 0x20, null], // 0x1e–0x27 has never been seen: unknown
+  ] as const) {
+    it(`a 0x5d file with update value 0x${b.toString(16)} is ${expected ?? "unknown"}`, () => {
+      expect(detect(withB(ver, b))).toEqual(expected ? { ok: true, version: expected } : { ok: false, code: "unknown-version" });
+    });
+  }
+
+  it("converted files get a low update value, so every update of the target year opens them", () => {
+    for (const to of ["23", "24", "25"]) {
+      const result = convert(withB("26", 0x02), to);
+      if (!result.ok) throw new Error(result.code);
+      expect(new DataView(result.bytes.buffer).getUint32(0x1c, false)).toBe(0x01);
+    }
   });
 });
 
@@ -103,7 +138,7 @@ describe("convert", () => {
 
   it.each([
     ["empty", new Uint8Array(0), "empty"],
-    ["unknown version", (() => { const b = read("26"); b[0x1f] = 0xee; return b; })(), "unknown-version"],
+    ["unknown version", (() => { const b = read("26"); b[0x1b] = 0xee; return b; })(), "unknown-version"],
   ])("%s input returns %s", (_, bytes, code) => {
     expect(convert(bytes as Uint8Array, "18")).toEqual({ ok: false, code });
   });
@@ -112,5 +147,41 @@ describe("convert", () => {
     const bytes = read("26");
     new DataView(bytes.buffer).setUint32(0x28, 0x10, false); // LIST chunk now claims 16 bytes
     expect(convert(bytes, "18")).toEqual({ ok: false, code: "check-failed" });
+  });
+});
+
+describe("chunksFit", () => {
+  // Builds big-endian RIFX chunks: 4-char type, u32 size, body, pad byte if odd.
+  const chunk = (type: string, ...parts: Uint8Array[]) => {
+    const body = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+    parts.reduce((at, p) => (body.set(p, at), at + p.length), 0);
+    const out = new Uint8Array(8 + body.length + (body.length % 2));
+    out.set(new TextEncoder().encode(type));
+    new DataView(out.buffer).setUint32(4, body.length, false);
+    out.set(body, 8);
+    return out;
+  };
+  const list = (id: string, ...children: Uint8Array[]) => chunk("LIST", new TextEncoder().encode(id), ...children);
+  const fits = (bytes: Uint8Array) => chunksFit(new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), 0, bytes.length);
+  const textData = new TextEncoder().encode("/98 << /0 13 >> /0 << /1 [ 0.5 ] >>"); // raw text-engine data, not chunks
+
+  it("accepts raw text data inside a btdk list (text layers)", () => {
+    expect(fits(list("tdgp", list("btdk", textData), chunk("tdsb", new Uint8Array(4))))).toBe(true);
+  });
+
+  it("still rejects raw data inside any other list", () => {
+    expect(fits(list("tdgp", list("Layr", textData)))).toBe(false);
+  });
+
+  it("still rejects a btdk list that runs past its parent", () => {
+    const bytes = list("tdgp", list("btdk", textData));
+    new DataView(bytes.buffer).setUint32(12 + 4, 999, false); // inner LIST claims 999 bytes
+    expect(fits(bytes)).toBe(false);
+  });
+
+  it("accepts a real project with a text layer", () => {
+    const bytes = new Uint8Array(readFileSync("tests/fixtures/aep/26/2026 - text.aep"));
+    const view = new DataView(bytes.buffer);
+    expect(chunksFit(view, 0x0c, 8 + view.getUint32(4, false))).toBe(true);
   });
 });
