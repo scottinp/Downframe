@@ -240,7 +240,9 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .checks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--text-2); font-size: 15px; }
 .checks li { display: flex; gap: 10px; }
 .checks .ok::before { content: "✓"; color: var(--blue); }
-.checks .warn::before { content: "!"; color: var(--warn-text); }
+/* the required "test it" step: a neutral next step, not an amber warning (amber read as "conversion failed") */
+.checks .next { color: var(--text); }
+.checks .next::before { content: "→"; color: var(--text-2); }
 
 /* ---------- facts strip ---------- */
 
@@ -251,8 +253,7 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 }
 .facts > div > b { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-2); }   /* column labels only, not bold text inside */
 .facts span { font-size: 16px; }
-.facts small { display: block; margin-top: 2px; font-size: 15px; color: var(--text-2); }   /* supported range under Direction */
-.facts small b { color: var(--purple-text); }
+.facts span b { color: var(--purple-text); }   /* the supported years */
 
 /* ---------- sections ---------- */
 

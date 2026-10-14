@@ -25,7 +25,7 @@ if (live) {
       c.firstElementChild!.textContent = c.dataset.before;
     }
     ver.replaceChildren("After Effects ", span("yr", "2026"));
-    msg.textContent = "Reading header";
+    msg.textContent = "Editing version stamp"; // one message for the whole scan; switching per byte was hard to read
     status.classList.remove("done");
     head.classList.remove("on");
     home();
@@ -33,7 +33,6 @@ if (live) {
 
   // The old value drops out, then the new one pops in blue with an overshoot.
   async function rewrite(c: HTMLElement) {
-    msg.textContent = "Rewriting version stamp";
     c.className = "cell v is-before out";
     await wait(180);
     c.firstElementChild!.textContent = c.dataset.after!;
@@ -61,7 +60,6 @@ if (live) {
       head.style.left = `${c.offsetLeft}px`;
       await wait(c.dataset.before ? 260 : 150);
       if (c.dataset.before) await rewrite(c);
-      else msg.textContent = "Reading header";
     }
     head.classList.remove("on");
     await wait(800); // let the new bytes register before the label reacts

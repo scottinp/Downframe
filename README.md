@@ -13,7 +13,7 @@
 ## Features
 
 - Convert an `.ffx` preset to an older version of After Effects
-- Batch convert: drop a whole pack and download it as one `.zip`
+- Batch convert: drop multiple files and download them as one `.zip`
 - Detects which After Effects version saved it, and checks every converted file before it can be downloaded
 - Supported versions: 2021, 2022, 2023, 2024, 2025, 2026
 - Runs entirely in your browser, no downloads
