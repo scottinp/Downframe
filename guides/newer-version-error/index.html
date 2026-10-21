@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Fix "created with a newer version of After Effects" (26 :: 280) | downframe</title>
+<meta name="description" content="Why After Effects says a file was created with a newer version, and how to open it in the version you have without upgrading.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guide</span>
+  <h1>"Created with a newer version of After Effects": how to open the file anyway</h1>
+
+  <p class="answer">The file was saved in a newer After Effects than yours. Every preset and project stores the version that saved it, and older versions refuse anything newer. Change that stamp to your version and it opens, as long as it doesn't rely on features your version lacks.</p>
+
+  <p>The full message looks like this:</p>
+  <blockquote>This file was created with a newer version of After Effects — time to upgrade your application! (26 :: 280)</blockquote>
+
+  <h2>Fix it in your browser</h2>
+  <ol>
+    <li>Open <a href="/#converter">the converter</a> and drop the <span class="kw-ffx">.ffx</span> or <span class="kw-aep">.aep</span> file in.</li>
+    <li>Pick the After Effects version you have (2021 to 2026).</li>
+    <li>Download the copy and open it. Your original is not changed.</li>
+  </ol>
+  <p>It's free, there's no account, and the file is converted inside your browser. It is never uploaded.</p>
+
+  <h2>If it still won't open</h2>
+  <ul>
+    <li><b>Missing effects.</b> Changing the stamp can't add an effect or property your version doesn't have.</li>
+    <li><b>Third-party plugins.</b> An older plugin version can crash After Effects instead of showing an error. Downframe lists plugin effects in a project before you convert.</li>
+    <li><b>Track matte layers.</b> A layer that uses another layer as its track matte (new in 2023) can't be converted to 2022 or older.</li>
+  </ul>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Convert a file</a></p>
+</main>
+
+</body>
+</html>

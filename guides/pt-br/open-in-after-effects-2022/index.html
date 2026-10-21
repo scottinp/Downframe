@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Abrir um projeto mais novo no After Effects 2022 | downframe</title>
+<meta name="description" content="Como abrir um projeto (.aep) ou preset (.ffx) do After Effects 2023–2026 no After Effects 2022 (22.x), e o único caso que não pode ser convertido.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guia</span>
+  <h1>Abrir um arquivo de 2023–2026 no After Effects 2022</h1>
+
+  <p class="answer">O After Effects 2022 (versão 22.x) recusa projetos e presets salvos no 2023 ou depois. Converta o arquivo para 2022 com o Downframe e abra a cópia. Aqui os projetos precisam de mais do que um novo número de versão, e o Downframe cuida disso para você.</p>
+
+  <h2>Passos</h2>
+  <ol>
+    <li>Abra <a href="/#converter">o conversor</a> e arraste o <span class="kw-aep">.aep</span> ou o <span class="kw-ffx">.ffx</span>.</li>
+    <li>Escolha "After Effects 2022 (22.x)" e clique em Convert.</li>
+    <li>Baixe a cópia e abra no 2022.</li>
+  </ol>
+
+  <h2>Por que os projetos são reconstruídos</h2>
+  <p>A partir do 2023, o After Effects guarda cada camada 4 bytes mais longa que o 2022. Trocar só o número da versão gera o erro "chunk in file too big — probably unsupported file version (33 :: 5)". O Downframe encurta cada registro de camada para o tamanho do 2022 e reconstrói o arquivo. Presets não precisam disso.</p>
+
+  <h2>O que não pode ser convertido</h2>
+  <ul>
+    <li><b>Track mattes de camada.</b> No 2023 qualquer camada pode ser escolhida como track matte. O 2022 não consegue ler isso, então esses projetos ficam como estão. <a href="/guides/pt-br/track-matte-older-version/">Mais sobre track mattes</a>.</li>
+    <li><b>Recursos mais novos.</b> Efeitos ou propriedades que só existem no 2023 ou depois não vão aparecer.</li>
+  </ul>
+  <p>Os arquivos convertidos foram testados no 2022 versão 22.6. Se algum não abrir em uma atualização anterior do 2022, atualize para a 22.6 ou <a href="mailto:feedback@downframe.net">me avise</a>.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Converter para 2022</a></p>
+</main>
+
+</body>
+</html>

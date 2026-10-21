@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+<title>Cara membuka proyek yang lebih baru di After Effects 2022 | downframe</title>
+<meta name="description" content="Cara membuka proyek (.aep) atau preset (.ffx) dari After Effects 2023–2026 di After Effects 2022 (22.x), dan satu kasus yang tidak bisa dikonversi.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Panduan</span>
+  <h1>Membuka file 2023–2026 di After Effects 2022</h1>
+
+  <p class="answer">After Effects 2022 (versi 22.x) menolak proyek dan preset yang disimpan di 2023 atau lebih baru. Konversi file ke 2022 dengan Downframe lalu buka salinannya. Untuk proyek, yang diubah bukan hanya nomor versi, dan Downframe mengurusnya untuk Anda.</p>
+
+  <h2>Langkah-langkah</h2>
+  <ol>
+    <li>Buka <a href="/#converter">konverter</a> lalu seret file <span class="kw-aep">.aep</span> atau <span class="kw-ffx">.ffx</span> ke sana.</li>
+    <li>Pilih "After Effects 2022 (22.x)" lalu klik Convert.</li>
+    <li>Unduh salinannya lalu buka di 2022.</li>
+  </ol>
+
+  <h2>Kenapa proyek disusun ulang</h2>
+  <p>Mulai 2023, After Effects menyimpan setiap layer 4 byte lebih panjang daripada 2022. Kalau hanya nomor versinya yang diubah, muncul error "chunk in file too big — probably unsupported file version (33 :: 5)". Downframe memendekkan setiap data layer ke ukuran 2022 dan menyusun ulang filenya. Preset tidak perlu ini.</p>
+
+  <h2>Yang tidak bisa dikonversi</h2>
+  <ul>
+    <li><b>Track matte dari layer lain.</b> Di 2023, layer mana pun bisa dipilih sebagai track matte. 2022 tidak bisa membacanya, jadi proyek seperti itu dibiarkan apa adanya. <a href="/guides/id/track-matte-older-version/">Selengkapnya tentang track matte</a>.</li>
+    <li><b>Fitur yang lebih baru.</b> Efek atau properti yang hanya ada di 2023 atau lebih baru tidak akan muncul.</li>
+  </ul>
+  <p>File hasil konversi sudah diuji di 2022 versi 22.6. Kalau ada yang tidak bisa dibuka di update 2022 yang lebih awal, update ke 22.6 atau <a href="mailto:feedback@downframe.net">kabari saya</a>.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Konversi ke 2022</a></p>
+</main>
+
+</body>
+</html>

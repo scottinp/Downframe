@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Track mattes and opening projects in After Effects 2022 or older | downframe</title>
+<meta name="description" content="Why projects with 2023 layer track mattes can't be converted to After Effects 2022 or 2021, and what you can do.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guide</span>
+  <h1>Track mattes and After Effects 2022 or older</h1>
+
+  <p class="answer">After Effects 2023 changed track mattes: any layer in the comp can be picked as a matte. Before that, the matte had to be the layer directly above. 2022 and 2021 can't read the new kind, so Downframe won't convert a project that uses one to those versions.</p>
+
+  <h2>What you'll see</h2>
+  <p>The project is kept as it is, with the note "Uses a 2023 track matte that 2022 and older can't read". Other files in the same batch still convert. Converting the same project to 2023 or later works.</p>
+
+  <h2>What you can do</h2>
+  <ul>
+    <li>If you have the newer After Effects, set those layers' Track Matte to None, rebuild them the old way (matte layer directly above), save, and drop the file in again. Downframe tells you if it still finds a layer track matte.</li>
+    <li>Ask whoever sent the project to do the same.</li>
+  </ul>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Check a project</a></p>
+</main>
+
+</body>
+</html>

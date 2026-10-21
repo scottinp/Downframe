@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Open a newer project in After Effects 2022 | downframe</title>
+<meta name="description" content="How to open an After Effects 2023–2026 project (.aep) or preset (.ffx) in After Effects 2022 (22.x), and the one case that can't be converted.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guide</span>
+  <h1>Open a 2023–2026 file in After Effects 2022</h1>
+
+  <p class="answer">After Effects 2022 (version 22.x) refuses projects and presets saved in 2023 or later. Convert the file to 2022 with Downframe and open the copy. Projects need more than a new version stamp here, and Downframe handles that for you.</p>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Open <a href="/#converter">the converter</a> and drop the <span class="kw-aep">.aep</span> or <span class="kw-ffx">.ffx</span> in.</li>
+    <li>Pick "After Effects 2022 (22.x)" and convert.</li>
+    <li>Download the copy and open it in 2022.</li>
+  </ol>
+
+  <h2>Why projects are rebuilt</h2>
+  <p>From 2023 on, After Effects stores every layer 4 bytes longer than 2022 does. Changing only the version stamp gives the error "chunk in file too big — probably unsupported file version (33 :: 5)". Downframe shortens every layer record back to the 2022 size and rebuilds the file around them. Presets don't need this.</p>
+
+  <h2>What can't be converted</h2>
+  <ul>
+    <li><b>Layer track mattes.</b> In 2023 any layer can be picked as a track matte. 2022 can't read that, so those projects are kept as they are. <a href="/guides/track-matte-older-version/">More on track mattes</a>.</li>
+    <li><b>Newer features.</b> Effects or properties that only exist in 2023 or later won't appear.</li>
+  </ul>
+  <p>Converted files were tested in 2022 version 22.6. If one won't open in an earlier 2022 update, update to 22.6 or <a href="mailto:feedback@downframe.net">tell me</a>.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Convert to 2022</a></p>
+</main>
+
+</body>
+</html>

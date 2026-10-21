@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<title>新しいプロジェクトを After Effects 2022 で開く | downframe</title>
+<meta name="description" content="After Effects 2023〜2026 のプロジェクト(.aep)やプリセット(.ffx)を After Effects 2022(22.x)で開く方法と、変換できない唯一のケース。">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">ガイド</span>
+  <h1>2023〜2026 のファイルを After Effects 2022 で開く</h1>
+
+  <p class="answer">After Effects 2022(バージョン 22.x)は、2023 以降で保存したプロジェクトやプリセットを開けません。Downframe でファイルを 2022 に変換して、コピーを開いてください。この場合、プロジェクトはバージョン番号の書き換えだけでは足りませんが、Downframe がまとめて処理します。</p>
+
+  <h2>手順</h2>
+  <ol>
+    <li><a href="/#converter">コンバーター</a>を開き、<span class="kw-aep">.aep</span> または <span class="kw-ffx">.ffx</span> をドロップします。</li>
+    <li>「After Effects 2022 (22.x)」を選んで Convert をクリックします。</li>
+    <li>コピーをダウンロードして 2022 で開きます。</li>
+  </ol>
+
+  <h2>プロジェクトを組み直す理由</h2>
+  <p>2023 以降の After Effects は、各レイヤーを 2022 より 4 バイト長く保存します。バージョン番号だけを変えると、「chunk in file too big — probably unsupported file version (33 :: 5)」というエラーになります。Downframe は各レイヤーのデータを 2022 のサイズに縮め、ファイルを組み直します。プリセットではこの処理は不要です。</p>
+
+  <h2>変換できないもの</h2>
+  <ul>
+    <li><b>レイヤーのトラックマット。</b>2023 では任意のレイヤーをトラックマットに指定できます。2022 はこれを読めないため、そのプロジェクトはそのまま残されます。<a href="/guides/ja/track-matte-older-version/">トラックマットについて詳しく</a>。</li>
+    <li><b>新しい機能。</b>2023 以降にしかないエフェクトやプロパティは表示されません。</li>
+  </ul>
+  <p>変換したファイルは 2022 のバージョン 22.6 でテストしています。それより前の 2022 のアップデートで開けない場合は、22.6 にアップデートするか、<a href="mailto:feedback@downframe.net">お知らせください</a>。</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">2022 に変換</a></p>
+</main>
+
+</body>
+</html>

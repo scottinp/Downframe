@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>After Effects crashes opening a project from a newer version | downframe</title>
+<meta name="description" content="Why After Effects can crash when opening a project converted from a newer version, and how to avoid it: usually third-party plugins.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guide</span>
+  <h1>After Effects crashes when opening a converted project</h1>
+
+  <p class="answer">The usual cause is a third-party plugin effect, such as Sapphire or Universe. Plugins save their own data in the project, and an older version of the plugin can crash After Effects instead of showing an error. Built-in effects don't do this.</p>
+
+  <h2>Find the plugins</h2>
+  <p>Drop the project into <a href="/#converter">the converter</a>. Before you convert, it lists every third-party effect the project uses, so you know which ones to look at.</p>
+
+  <h2>Avoid the crash</h2>
+  <ol>
+    <li>If you or someone else has the newer After Effects, disable or remove those effects there, save, and convert that file.</li>
+    <li>Install the same plugin version on your computer if you can.</li>
+    <li>Save your other open work before opening the converted project, in case it crashes.</li>
+  </ol>
+
+  <h2>Not a crash, just an error?</h2>
+  <p>If After Effects shows a message instead of crashing, the project may use an effect or feature your version doesn't have. Converting changes the version stamp; it can't add what your version is missing.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Check a project</a></p>
+</main>
+
+</body>
+</html>

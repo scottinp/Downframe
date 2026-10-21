@@ -10,7 +10,8 @@ const gz = (ext: string) => files.filter((f) => f.endsWith(ext)).reduce((s, f) =
 const got = {
   jsGzip: gz(".js"),
   cssGzip: gz(".css"),
-  totalRaw: files.reduce((s, f) => s + readFileSync(f).length, 0),
+  // Guide pages and the sitemap listing them are text that grows with every language, so they don't count; the budget is for the main page's images and fonts.
+  totalRaw: files.filter((f) => !/^dist\/guides[\\/]/.test(f) && f !== "dist/sitemap.xml").reduce((s, f) => s + readFileSync(f).length, 0),
 };
 
 const fails: string[] = [];

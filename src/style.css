@@ -347,6 +347,21 @@ nav a { text-decoration: none; color: var(--text-2); padding: 12px 0; }
 .faq summary { cursor: pointer; padding: 14px 0; font-size: 18px; font-weight: 500; }
 .faq p { margin: 0 0 16px; color: var(--text-2); max-width: 38em; }
 
+/* ---------- guide pages (guides/*) ---------- */
+
+.guide { max-width: 760px; padding-top: 40px; padding-bottom: 88px; }
+.guide h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 24px; }
+.guide h2 { font-size: 1.5rem; margin: 48px 0 12px; max-width: none; }
+.guide p, .guide li { color: var(--text-2); }
+.guide .answer { font-size: 1.2rem; color: var(--text); }
+.guide li { margin-bottom: 8px; }
+.guide blockquote { margin: 0; padding: 14px 18px; border-left: 3px solid var(--blue); background: var(--panel); font-family: var(--mono); font-size: 15px; }
+.guide code { font-family: var(--mono); font-size: 0.9em; }
+.guide .actions { margin-top: 40px; }
+.guide table { width: 100%; border-collapse: collapse; color: var(--text-2); font-size: 15px; }
+.guide th, .guide td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); }
+.guide th { color: var(--text); font-weight: 500; }
+
 /* ---------- footer ---------- */
 
 footer { padding: 36px 0 56px; border-top: 1px solid var(--line); color: var(--text-2); }

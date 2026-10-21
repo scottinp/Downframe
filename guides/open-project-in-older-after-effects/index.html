@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Open an After Effects project in an older version (.aep) | downframe</title>
+<meta name="description" content="How to open a .aep project saved in a newer After Effects, from 2026 down to 2021, when you don't have the newer version.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Guide</span>
+  <h1>Open an After Effects project in an older version</h1>
+
+  <p class="answer">If you have the newer After Effects, use File → Save As → Save a Copy As, which saves for up to two versions back (2026 offers 25.x and 24.x). If you don't (a client or teammate sent the project), convert the <span class="kw-aep">.aep</span> to your version with Downframe. It works from 2026 down to 2021.</p>
+
+  <h2>Convert the project</h2>
+  <ol>
+    <li>Open <a href="/#converter">the converter</a> and drop the <span class="kw-aep">.aep</span> in. You can drop several at once and get one .zip.</li>
+    <li>Check the list of third-party plugin effects, if any are shown. Disable them in the newer version first if you can.</li>
+    <li>Pick your version, convert, and open the copy.</li>
+  </ol>
+  <p>Projects up to 500 MB are fine. The file stays in your browser and is never uploaded.</p>
+
+  <h2>What changes, and what doesn't</h2>
+  <p>Downframe rewrites the version stamp. Projects saved in 2023 or later going to 2022 or 2021 are also rebuilt, because those versions store each layer 4 bytes shorter. Nothing else is touched, so effects your version doesn't have won't appear, and a layer that uses another layer as its track matte can't go to 2022 or older.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Convert a project</a></p>
+</main>
+
+</body>
+</html>

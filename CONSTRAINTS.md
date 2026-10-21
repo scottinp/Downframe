@@ -14,7 +14,7 @@ Failing checks block handing work back. Never weaken a rule to make a change pas
 |---|---|---|---|
 | JS gzip | ≤ 7000 B | 6530 (2026-10-14) | Started at 3000 (2026-10-11). Raised to 4000 on 2026-10-12 (user OK) for batch upload + zip writer, then to 5000 the same day (user OK) for adding files to a batch. Raised to 6000 on 2026-10-13 (user OK) for the animated "How it works" byte strip. Raised to 7000 on 2026-10-14 (user OK) for `.aep` project support (trimming, plugin scan, messages). |
 | CSS gzip | ≤ 4000 B | 3713 (2026-10-14) | Started at 2500. Raised to 3000 on 2026-10-12 (user OK), same reason. Raised to 4000 on 2026-10-13 (user OK) for the byte strip. |
-| dist total raw | ≤ 66000 B | 64595 | Catches a large new image or font. |
+| dist total raw (excluding `dist/guides/` and `dist/sitemap.xml`) | ≤ 66000 B | 64595 | Catches a large new image or font. Guide pages and the generated sitemap that lists them left out on 2026-10-21 (user OK): text-only SEO pages in several languages would outgrow it without adding weight to the main page. |
 | Built `index.html` has CSP exactly `connect-src 'self'` | present | present | File bytes can't reach any third party. Was `'none'`; loosened to `'self'` on 2026-10-11 (user OK) so Vercel Analytics can post to its same-origin `/_vercel/insights` endpoint. |
 
 Size and CSP: `scripts/check-dist.ts` (budgets live there; keep both in sync).

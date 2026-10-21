@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<title>Как открыть новый проект в After Effects 2022 | downframe</title>
+<meta name="description" content="Как открыть проект (.aep) или пресет (.ffx) из After Effects 2023–2026 в After Effects 2022 (22.x), и какой случай сконвертировать нельзя.">
+</head>
+<body>
+
+<main class="guide wrap">
+  <span class="kicker">Руководство</span>
+  <h1>Как открыть файл 2023–2026 в After Effects 2022</h1>
+
+  <p class="answer">After Effects 2022 (версия 22.x) не открывает проекты и пресеты, сохранённые в 2023 и позже. Сконвертируйте файл в 2022 с помощью Downframe и откройте копию. Проектам здесь нужна не только замена номера версии, и Downframe делает это за вас.</p>
+
+  <h2>Шаги</h2>
+  <ol>
+    <li>Откройте <a href="/#converter">конвертер</a> и перетащите в него <span class="kw-aep">.aep</span> или <span class="kw-ffx">.ffx</span>.</li>
+    <li>Выберите «After Effects 2022 (22.x)» и нажмите Convert.</li>
+    <li>Скачайте копию и откройте её в 2022.</li>
+  </ol>
+
+  <h2>Почему проекты перестраиваются</h2>
+  <p>Начиная с 2023, After Effects хранит каждый слой на 4 байта длиннее, чем 2022. Если поменять только номер версии, появится ошибка «chunk in file too big — probably unsupported file version (33 :: 5)». Downframe укорачивает каждую запись слоя до размера 2022 и пересобирает файл. Пресетам это не нужно.</p>
+
+  <h2>Что сконвертировать нельзя</h2>
+  <ul>
+    <li><b>Track matte из другого слоя.</b> В 2023 любой слой можно выбрать как track matte. 2022 такое не читает, поэтому такие проекты остаются без изменений. <a href="/guides/ru/track-matte-older-version/">Подробнее о track matte</a>.</li>
+    <li><b>Новые возможности.</b> Эффекты и свойства, которые есть только в 2023 и новее, не появятся.</li>
+  </ul>
+  <p>Сконвертированные файлы проверены в версии 22.6. Если файл не открывается в более раннем обновлении 2022, обновитесь до 22.6 или <a href="mailto:feedback@downframe.net">напишите мне</a>.</p>
+
+  <p class="actions"><a class="btn primary" href="/#converter">Конвертировать в 2022</a></p>
+</main>
+
+</body>
+</html>
